@@ -8,29 +8,20 @@ INSERT INTO Hotel_Chain (name, central_office_address) VALUES
 
 -- Insert contacts for all chains (2-3 contacts per chain)
 INSERT INTO Chain_Contact (chain_id, contact_type, value) VALUES
--- Grand Hotels contacts
 (1, 'email', 'reservations@grandhotels.com'),
 (1, 'phone', '800-111-1111'),
-(1, 'email', 'support@grandhotels.com'),
--- Oceanview Resorts contacts
-(2, 'email', 'bookings@oceanview.com'),
+(2, 'email', 'reservations@oceanview.com'),
 (2, 'phone', '800-222-2222'),
-(2, 'email', 'info@oceanview.com'),
--- Mountain Retreats contacts
 (3, 'email', 'reservations@mountainretreats.com'),
 (3, 'phone', '800-333-3333'),
--- Urban Stays contacts
-(4, 'email', 'bookings@urbanstays.com'),
+(4, 'email', 'reservations@urbanstays.com'),
 (4, 'phone', '800-444-4444'),
-(4, 'email', 'support@urbanstays.com'),
--- Heritage Inns contacts
 (5, 'email', 'reservations@heritageinns.com'),
 (5, 'phone', '800-555-5555');
 
 -- Insert all 8 hotels for each chain (40 hotels total)
-
--- Grand Hotels properties
 INSERT INTO Hotel (chain_id, address, category) VALUES
+-- Grand Hotels contacts
 (1, '100 Park Avenue, New York, NY', 5),
 (1, '200 Central Park South, New York, NY', 5),
 (1, '300 Sunset Boulevard, Los Angeles, CA', 4),
@@ -38,10 +29,8 @@ INSERT INTO Hotel (chain_id, address, category) VALUES
 (1, '500 Bourbon Street, New Orleans, LA', 3),
 (1, '600 Fisherman''s Wharf, San Francisco, CA', 3),
 (1, '700 Ocean Drive, Miami, FL', 4),
-(1, '800 Beacon Street, Boston, MA', 3);
-
--- Oceanview Resorts properties
-INSERT INTO Hotel (chain_id, address, category) VALUES
+(1, '800 Beacon Street, Boston, MA', 3),
+-- Oceanview Resorts contacts
 (2, '900 Beachfront Way, Miami, FL', 5),
 (2, '1000 Coastal Highway, Miami, FL', 4),
 (2, '1100 Harbor View, San Diego, CA', 4),
@@ -49,10 +38,8 @@ INSERT INTO Hotel (chain_id, address, category) VALUES
 (2, '1300 Shoreline Drive, Santa Monica, CA', 4),
 (2, '1400 Gulf Boulevard, Clearwater, FL', 3),
 (2, '1500 Ocean Avenue, Santa Barbara, CA', 5),
-(2, '1600 Seaside Lane, Myrtle Beach, SC', 3);
-
--- Mountain Retreats properties
-INSERT INTO Hotel (chain_id, address, category) VALUES
+(2, '1600 Seaside Lane, Myrtle Beach, SC', 3),
+-- Mountain Retreats contacts
 (3, '1700 Alpine Way, Denver, CO', 4),
 (3, '1800 Mountain View, Aspen, CO', 5),
 (3, '1900 Ski Resort Lane, Park City, UT', 4),
@@ -60,10 +47,8 @@ INSERT INTO Hotel (chain_id, address, category) VALUES
 (3, '2100 Summit Road, Vail, CO', 5),
 (3, '2200 Canyon Boulevard, Sedona, AZ', 4),
 (3, '2300 Forest Trail, Lake Tahoe, CA', 3),
-(3, '2400 Wilderness Way, Jackson Hole, WY', 4);
-
--- Urban Stays properties
-INSERT INTO Hotel (chain_id, address, category) VALUES
+(3, '2400 Wilderness Way, Jackson Hole, WY', 4),
+-- Urban Stays contacts
 (4, '2500 Downtown Plaza, Chicago, IL', 4),
 (4, '2600 Arts District, Los Angeles, CA', 3),
 (4, '2700 Financial Center, New York, NY', 5),
@@ -71,10 +56,8 @@ INSERT INTO Hotel (chain_id, address, category) VALUES
 (4, '2900 Tech Hub, San Francisco, CA', 4),
 (4, '3000 Waterfront, Seattle, WA', 3),
 (4, '3100 Historic Square, Philadelphia, PA', 4),
-(4, '3200 Capitol View, Washington, DC', 5);
-
--- Heritage Inns properties
-INSERT INTO Hotel (chain_id, address, category) VALUES
+(4, '3200 Capitol View, Washington, DC', 5),
+-- Heritage Inns contacts
 (5, '3300 Colonial Square, Boston, MA', 3),
 (5, '3400 Antebellum Manor, Charleston, SC', 4),
 (5, '3500 Victorian Mansion, San Francisco, CA', 3),
@@ -95,7 +78,6 @@ INSERT INTO Hotel_Contact (hotel_id, contact_type, value) VALUES
 (6, 'email', 'sf@grandhotels.com'), (6, 'phone', '415-111-1111'),
 (7, 'email', 'miami@grandhotels.com'), (7, 'phone', '305-111-1111'),
 (8, 'email', 'boston@grandhotels.com'), (8, 'phone', '617-111-1111'),
-
 -- Oceanview Resorts contacts
 (9, 'email', 'miami1@oceanview.com'), (9, 'phone', '305-222-2222'),
 (10, 'email', 'miami2@oceanview.com'), (10, 'phone', '305-333-3333'),
@@ -105,7 +87,6 @@ INSERT INTO Hotel_Contact (hotel_id, contact_type, value) VALUES
 (14, 'email', 'clearwater@oceanview.com'), (14, 'phone', '727-222-2222'),
 (15, 'email', 'santabarbara@oceanview.com'), (15, 'phone', '805-222-2222'),
 (16, 'email', 'myrtlebeach@oceanview.com'), (16, 'phone', '843-222-2222'),
-
 -- Mountain Retreats contacts
 (17, 'email', 'denver@mountainretreats.com'), (17, 'phone', '303-333-3333'),
 (18, 'email', 'aspen@mountainretreats.com'), (18, 'phone', '970-333-3333'),
@@ -115,7 +96,6 @@ INSERT INTO Hotel_Contact (hotel_id, contact_type, value) VALUES
 (22, 'email', 'sedona@mountainretreats.com'), (22, 'phone', '928-333-3333'),
 (23, 'email', 'laketahoe@mountainretreats.com'), (23, 'phone', '530-333-3333'),
 (24, 'email', 'jacksonhole@mountainretreats.com'), (24, 'phone', '307-333-3333'),
-
 -- Urban Stays contacts
 (25, 'email', 'chicago@urbanstays.com'), (25, 'phone', '312-444-4444'),
 (26, 'email', 'la@urbanstays.com'), (26, 'phone', '213-444-4444'),
@@ -125,7 +105,6 @@ INSERT INTO Hotel_Contact (hotel_id, contact_type, value) VALUES
 (30, 'email', 'seattle@urbanstays.com'), (30, 'phone', '206-444-4444'),
 (31, 'email', 'philadelphia@urbanstays.com'), (31, 'phone', '215-444-4444'),
 (32, 'email', 'dc@urbanstays.com'), (32, 'phone', '202-444-4444'),
-
 -- Heritage Inns contacts
 (33, 'email', 'boston@heritageinns.com'), (33, 'phone', '617-555-5555'),
 (34, 'email', 'charleston@heritageinns.com'), (34, 'phone', '843-555-5555'),
@@ -819,337 +798,259 @@ INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (1, 'Bob Williams', '789 Pine Rd, NY', '333-33-3333', 'housekeeping'),
 (1, 'Sarah Brown', '101 Elm St, NY', '444-44-4444', 'receptionist'),
 (1, 'Mike Davis', '202 Maple Ave, NY', '555-55-5555', 'housekeeping'),
-(1, 'Lisa Miller', '303 Birch Ln, NY', '666-66-6666', 'housekeeping');
-
+(1, 'Lisa Miller', '303 Birch Ln, NY', '666-66-6666', 'housekeeping'),
 -- Hotel 2 employees (NYC 5-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (2, 'Emily Wilson', '404 Cedar Blvd, NY', '777-77-7777', 'manager'),
 (2, 'David Taylor', '505 Redwood Dr, NY', '888-88-8888', 'receptionist'),
 (2, 'Jessica Anderson', '606 Spruce Ct, NY', '999-99-9999', 'housekeeping'),
 (2, 'Thomas Martinez', '707 Aspen Way, NY', '123-45-6789', 'receptionist'),
 (2, 'Jennifer Thompson', '808 Willow Rd, NY', '234-56-7890', 'housekeeping'),
-(2, 'Robert Garcia', '909 Magnolia Dr, NY', '345-67-8901', 'housekeeping');
-
+(2, 'Robert Garcia', '909 Magnolia Dr, NY', '345-67-8901', 'housekeeping'),
 -- Hotel 3 employees (LA 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (3, 'Michael Rodriguez', '100 Palm Blvd, LA', '456-78-9012', 'manager'),
 (3, 'Sarah Wilson', '200 Sequoia Rd, LA', '567-89-0123', 'receptionist'),
 (3, 'Daniel Martinez', '300 Juniper Ln, LA', '678-90-1234', 'housekeeping'),
 (3, 'Patricia Davis', '400 Redbud Ave, LA', '789-01-2345', 'receptionist'),
-(3, 'Christopher Brown', '500 Hawthorn Dr, LA', '890-12-3456', 'housekeeping');
-
+(3, 'Christopher Brown', '500 Hawthorn Dr, LA', '890-12-3456', 'housekeeping'),
 -- Hotel 4 employees (Chicago 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (4, 'Matthew Johnson', '600 Sycamore Ln, Chicago', '901-23-4567', 'manager'),
 (4, 'Amanda White', '700 Dogwood Ave, Chicago', '012-34-5678', 'receptionist'),
 (4, 'Kevin Lee', '800 Hickory St, Chicago', '123-45-6789', 'housekeeping'),
 (4, 'Laura Harris', '900 Willow Rd, Chicago', '234-56-7890', 'receptionist'),
 (4, 'Richard Clark', '1000 Magnolia Dr, Chicago', '345-67-8901', 'housekeeping'),
-(4, 'Nancy Lewis', '1100 Redwood Ln, Chicago', '456-78-9012', 'housekeeping');
-
+(4, 'Nancy Lewis', '1100 Redwood Ln, Chicago', '456-78-9012', 'housekeeping'),
 -- Hotel 5 employees (New Orleans 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (5, 'Charles Walker', '1200 Oak Ave, New Orleans', '567-89-0123', 'manager'),
 (5, 'Karen Hall', '1300 Pine Rd, New Orleans', '678-90-1234', 'receptionist'),
 (5, 'Steven Allen', '1400 Elm St, New Orleans', '789-01-2345', 'housekeeping'),
 (5, 'Donna Young', '1500 Maple Ave, New Orleans', '890-12-3456', 'receptionist'),
-(5, 'Paul King', '1600 Birch Ln, New Orleans', '901-23-4567', 'housekeeping');
-
+(5, 'Paul King', '1600 Birch Ln, New Orleans', '901-23-4567', 'housekeeping'),
 -- Hotel 6 employees (San Francisco 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (6, 'Mark Scott', '1700 Cedar Blvd, SF', '012-34-5678', 'manager'),
 (6, 'Samantha Green', '1800 Spruce Ct, SF', '123-45-6789', 'receptionist'),
 (6, 'Jason Baker', '1900 Aspen Way, SF', '234-56-7890', 'housekeeping'),
 (6, 'Melissa Adams', '2000 Willow Rd, SF', '345-67-8901', 'receptionist'),
 (6, 'Timothy Nelson', '2100 Magnolia Dr, SF', '456-78-9012', 'housekeeping'),
-(6, 'Rebecca Carter', '2200 Redwood Ln, SF', '567-89-0123', 'housekeeping');
-
+(6, 'Rebecca Carter', '2200 Redwood Ln, SF', '567-89-0123', 'housekeeping'),
 -- Hotel 7 employees (Miami 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (7, 'Andrew Mitchell', '2300 Palm Blvd, Miami', '678-90-1234', 'manager'),
 (7, 'Stephanie Perez', '2400 Sequoia Rd, Miami', '789-01-2345', 'receptionist'),
 (7, 'Joshua Roberts', '2500 Juniper Ln, Miami', '890-12-3456', 'housekeeping'),
 (7, 'Cynthia Turner', '2600 Redbud Ave, Miami', '901-23-4567', 'receptionist'),
 (7, 'Jeffrey Phillips', '2700 Hawthorn Dr, Miami', '012-34-5678', 'housekeeping'),
-(7, 'Angela Campbell', '2800 Sycamore Ln, Miami', '123-45-6789', 'housekeeping');
-
+(7, 'Angela Campbell', '2800 Sycamore Ln, Miami', '123-45-6789', 'housekeeping'),
 -- Hotel 8 employees (Boston 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (8, 'Ryan Parker', '2900 Dogwood Ave, Boston', '234-56-7890', 'manager'),
 (8, 'Rachel Evans', '3000 Hickory St, Boston', '345-67-8901', 'receptionist'),
 (8, 'Nicholas Edwards', '3100 Willow Rd, Boston', '456-78-9012', 'housekeeping'),
 (8, 'Heather Collins', '3200 Magnolia Dr, Boston', '567-89-0123', 'receptionist'),
-(8, 'Patrick Stewart', '3300 Redwood Ln, Boston', '678-90-1234', 'housekeeping');
-
+(8, 'Patrick Stewart', '3300 Redwood Ln, Boston', '678-90-1234', 'housekeeping'),
 -- Hotel 9 employees (Miami 5-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (9, 'Brandon Sanchez', '3400 Oak Ave, Miami', '789-01-2345', 'manager'),
 (9, 'Danielle Morris', '3500 Pine Rd, Miami', '890-12-3456', 'receptionist'),
 (9, 'Justin Rogers', '3600 Elm St, Miami', '901-23-4567', 'housekeeping'),
 (9, 'Tiffany Reed', '3700 Maple Ave, Miami', '012-34-5678', 'receptionist'),
 (9, 'Scott Cook', '3800 Birch Ln, Miami', '123-45-6789', 'housekeeping'),
-(9, 'Christina Morgan', '3900 Cedar Blvd, Miami', '234-56-7890', 'housekeeping');
-
+(9, 'Christina Morgan', '3900 Cedar Blvd, Miami', '234-56-7890', 'housekeeping'),
 -- Hotel 10 employees (Miami 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (10, 'Samuel Murphy', '4100 Aspen Way, Miami', '456-78-9012', 'manager'),
 (10, 'Victoria Bailey', '4200 Willow Rd, Miami', '567-89-0123', 'receptionist'),
 (10, 'Frank Rivera', '4300 Magnolia Dr, Miami', '678-90-1234', 'housekeeping'),
 (10, 'Brenda Cooper', '4400 Redwood Ln, Miami', '789-01-2345', 'receptionist'),
 (10, 'Raymond Richardson', '4500 Palm Blvd, Miami', '890-12-3456', 'housekeeping'),
-(10, 'Diana Cox', '4600 Sequoia Rd, Miami', '901-23-4567', 'housekeeping');
-
+(10, 'Diana Cox', '4600 Sequoia Rd, Miami', '901-23-4567', 'housekeeping'),
 -- Hotel 11 employees (San Diego 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (11, 'Peter Howard', '4700 Juniper Ln, San Diego', '012-34-5678', 'manager'),
 (11, 'Evelyn Ward', '4800 Redbud Ave, San Diego', '123-45-6789', 'receptionist'),
 (11, 'Aaron Torres', '4900 Hawthorn Dr, San Diego', '234-56-7890', 'housekeeping'),
 (11, 'Judith Peterson', '5000 Sycamore Ln, San Diego', '345-67-8901', 'receptionist'),
 (11, 'Ralph Gray', '5100 Dogwood Ave, San Diego', '456-78-9012', 'housekeeping'),
-(11, 'Megan Ramirez', '5200 Hickory St, San Diego', '567-89-0123', 'housekeeping');
-
+(11, 'Megan Ramirez', '5200 Hickory St, San Diego', '567-89-0123', 'housekeeping'),
 -- Hotel 12 employees (Tampa 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (12, 'Keith James', '5300 Willow Rd, Tampa', '678-90-1234', 'manager'),
 (12, 'Cheryl Watson', '5400 Magnolia Dr, Tampa', '789-01-2345', 'receptionist'),
 (12, 'Ralph Brooks', '5500 Redwood Ln, Tampa', '890-12-3456', 'housekeeping'),
 (12, 'Gloria Kelly', '5600 Palm Blvd, Tampa', '901-23-4567', 'receptionist'),
-(12, 'Roy Sanders', '5700 Sequoia Rd, Tampa', '012-34-5678', 'housekeeping');
-
+(12, 'Roy Sanders', '5700 Sequoia Rd, Tampa', '012-34-5678', 'housekeeping'),
 -- Hotel 13 employees (Santa Monica 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (13, 'Dennis Price', '5800 Juniper Ln, Santa Monica', '123-45-6789', 'manager'),
 (13, 'Pamela Bennett', '5900 Redbud Ave, Santa Monica', '234-56-7890', 'receptionist'),
 (13, 'Jerry Wood', '6000 Hawthorn Dr, Santa Monica', '345-67-8901', 'housekeeping'),
 (13, 'Janet Barnes', '6100 Sycamore Ln, Santa Monica', '456-78-9012', 'receptionist'),
 (13, 'Henry Ross', '6200 Dogwood Ave, Santa Monica', '567-89-0123', 'housekeeping'),
-(13, 'Deborah Henderson', '6300 Hickory St, Santa Monica', '678-90-1234', 'housekeeping');
-
+(13, 'Deborah Henderson', '6300 Hickory St, Santa Monica', '678-90-1234', 'housekeeping'),
 -- Hotel 14 employees (Clearwater 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (14, 'Ralph Coleman', '6400 Willow Rd, Clearwater', '789-01-2345', 'manager'),
 (14, 'Shirley Jenkins', '6500 Magnolia Dr, Clearwater', '890-12-3456', 'receptionist'),
 (14, 'Eugene Perry', '6600 Redwood Ln, Clearwater', '901-23-4567', 'housekeeping'),
 (14, 'Joyce Powell', '6700 Palm Blvd, Clearwater', '012-34-5678', 'receptionist'),
-(14, 'Bruce Long', '6800 Sequoia Rd, Clearwater', '123-45-6789', 'housekeeping');
-
+(14, 'Bruce Long', '6800 Sequoia Rd, Clearwater', '123-45-6789', 'housekeeping'),
 -- Hotel 15 employees (Santa Barbara 5-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (15, 'Philip Hughes', '6900 Juniper Ln, Santa Barbara', '234-56-7890', 'manager'),
 (15, 'Teresa Flores', '7000 Redbud Ave, Santa Barbara', '345-67-8901', 'receptionist'),
 (15, 'Louis Washington', '7100 Hawthorn Dr, Santa Barbara', '456-78-9012', 'housekeeping'),
 (15, 'Ann Butler', '7200 Sycamore Ln, Santa Barbara', '567-89-0123', 'receptionist'),
 (15, 'Wayne Simmons', '7300 Dogwood Ave, Santa Barbara', '678-90-1234', 'housekeeping'),
-(15, 'Rose Foster', '7400 Hickory St, Santa Barbara', '789-01-2345', 'housekeeping');
-
+(15, 'Rose Foster', '7400 Hickory St, Santa Barbara', '789-01-2345', 'housekeeping'),
 -- Hotel 16 employees (Myrtle Beach 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (16, 'Johnny Alexander', '7700 Redwood Ln, Myrtle Beach', '012-34-5678', 'manager'),
 (16, 'Julie Russell', '7800 Palm Blvd, Myrtle Beach', '123-45-6789', 'receptionist'),
 (16, 'Lawrence Griffin', '7900 Sequoia Rd, Myrtle Beach', '234-56-7890', 'housekeeping'),
 (16, 'Theresa Diaz', '8000 Juniper Ln, Myrtle Beach', '345-67-8901', 'receptionist'),
-(16, 'Norman Hayes', '8100 Redbud Ave, Myrtle Beach', '456-78-9012', 'housekeeping');
-
+(16, 'Norman Hayes', '8100 Redbud Ave, Myrtle Beach', '456-78-9012', 'housekeeping'),
 -- Hotel 17 employees (Denver 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (17, 'Harry Myers', '8200 Hawthorn Dr, Denver', '567-89-0123', 'manager'),
 (17, 'Mildred Ford', '8300 Sycamore Ln, Denver', '678-90-1234', 'receptionist'),
 (17, 'Philip Hamilton', '8400 Dogwood Ave, Denver', '789-01-2345', 'housekeeping'),
 (17, 'Denise Graham', '8500 Hickory St, Denver', '890-12-3456', 'receptionist'),
 (17, 'Roger Sullivan', '8600 Willow Rd, Denver', '901-23-4567', 'housekeeping'),
-(17, 'Katherine Wallace', '8700 Magnolia Dr, Denver', '012-34-5678', 'housekeeping');
-
+(17, 'Katherine Wallace', '8700 Magnolia Dr, Denver', '012-34-5678', 'housekeeping'),
 -- Hotel 18 employees (Aspen 5-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (18, 'Earl Woods', '8800 Redwood Ln, Aspen', '123-45-6789', 'manager'),
 (18, 'Beverly Cole', '8900 Palm Blvd, Aspen', '234-56-7890', 'receptionist'),
 (18, 'Phillip West', '9000 Sequoia Rd, Aspen', '345-67-8901', 'housekeeping'),
 (18, 'Lori Jordan', '9100 Juniper Ln, Aspen', '456-78-9012', 'receptionist'),
 (18, 'Gerald Owens', '9200 Redbud Ave, Aspen', '567-89-0123', 'housekeeping'),
-(18, 'Janice Reynolds', '9300 Hawthorn Dr, Aspen', '678-90-1234', 'housekeeping');
-
+(18, 'Janice Reynolds', '9300 Hawthorn Dr, Aspen', '678-90-1234', 'housekeeping'),
 -- Hotel 19 employees (Park City 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (19, 'Carl Gibson', '9600 Hickory St, Park City', '901-23-4567', 'manager'),
 (19, 'Peggy Mcdonald', '9700 Willow Rd, Park City', '012-34-5678', 'receptionist'),
 (19, 'Arthur Cruz', '9800 Magnolia Dr, Park City', '123-45-6789', 'housekeeping'),
 (19, 'Diana Marshall', '9900 Redwood Ln, Park City', '234-56-7890', 'receptionist'),
 (19, 'Walter Ortiz', '100 Palm Blvd, Park City', '345-67-8901', 'housekeeping'),
-(19, 'Phyllis Gomez', '200 Sequoia Rd, Park City', '456-78-9012', 'housekeeping');
-
+(19, 'Phyllis Gomez', '200 Sequoia Rd, Park City', '456-78-9012', 'housekeeping'),
 -- Hotel 20 employees (Boulder 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (20, 'Jack Murray', '300 Juniper Ln, Boulder', '567-89-0123', 'manager'),
 (20, 'Lois Freeman', '400 Redbud Ave, Boulder', '678-90-1234', 'receptionist'),
 (20, 'Roger Wells', '500 Hawthorn Dr, Boulder', '789-01-2345', 'housekeeping'),
 (20, 'Wanda Webb', '600 Sycamore Ln, Boulder', '890-12-3456', 'receptionist'),
-(20, 'Alan Simpson', '700 Dogwood Ave, Boulder', '901-23-4567', 'housekeeping');
-
+(20, 'Alan Simpson', '700 Dogwood Ave, Boulder', '901-23-4567', 'housekeeping'),
 -- Hotel 21 employees (Vail 5-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (21, 'Ralph Johnston', '800 Hickory St, Vail', '012-34-5678', 'manager'),
 (21, 'Tina Bishop', '900 Willow Rd, Vail', '123-45-6789', 'receptionist'),
 (21, 'Eugene Meyer', '1000 Magnolia Dr, Vail', '234-56-7890', 'housekeeping'),
 (21, 'Glenda Lynch', '1100 Redwood Ln, Vail', '345-67-8901', 'receptionist'),
 (21, 'Leonard Gilbert', '1200 Palm Blvd, Vail', '456-78-9012', 'housekeeping'),
-(21, 'Florence Dean', '1300 Sequoia Rd, Vail', '567-89-0123', 'housekeeping');
-
+(21, 'Florence Dean', '1300 Sequoia Rd, Vail', '567-89-0123', 'housekeeping'),
 -- Hotel 22 employees (Sedona 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (22, 'Clarence Jensen', '1600 Hawthorn Dr, Sedona', '890-12-3456', 'manager'),
 (22, 'Sue Montgomery', '1700 Sycamore Ln, Sedona', '901-23-4567', 'receptionist'),
 (22, 'Dale Franklin', '1800 Dogwood Ave, Sedona', '012-34-5678', 'housekeeping'),
 (22, 'Lillie Lawson', '1900 Hickory St, Sedona', '123-45-6789', 'receptionist'),
 (22, 'Clifford George', '2000 Willow Rd, Sedona', '234-56-7890', 'housekeeping'),
-(22, 'Kristina Fields', '2100 Magnolia Dr, Sedona', '345-67-8901', 'housekeeping');
-
+(22, 'Kristina Fields', '2100 Magnolia Dr, Sedona', '345-67-8901', 'housekeeping'),
 -- Hotel 23 employees (Lake Tahoe 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (23, 'Raymond Gutierrez', '2200 Redwood Ln, Lake Tahoe', '456-78-9012', 'manager'),
 (23, 'Marian Sutton', '2300 Palm Blvd, Lake Tahoe', '567-89-0123', 'receptionist'),
 (23, 'Leroy Obrien', '2400 Sequoia Rd, Lake Tahoe', '678-90-1234', 'housekeeping'),
 (23, 'Lydia Carlson', '2500 Juniper Ln, Lake Tahoe', '789-01-2345', 'receptionist'),
-(23, 'Martin Vargas', '2600 Redbud Ave, Lake Tahoe', '890-12-3456', 'housekeeping');
-
+(23, 'Martin Vargas', '2600 Redbud Ave, Lake Tahoe', '890-12-3456', 'housekeeping'),
 -- Hotel 24 employees (Jackson Hole 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (24, 'Tommy Rios', '2700 Hawthorn Dr, Jackson Hole', '901-23-4567', 'manager'),
 (24, 'Gwendolyn Douglas', '2800 Sycamore Ln, Jackson Hole', '012-34-5678', 'receptionist'),
 (24, 'Lionel Byrd', '2900 Dogwood Ave, Jackson Hole', '123-45-6789', 'housekeeping'),
 (24, 'Erika Gregory', '3000 Hickory St, Jackson Hole', '234-56-7890', 'receptionist'),
 (24, 'Dwayne Estrada', '3100 Willow Rd, Jackson Hole', '345-67-8901', 'housekeeping'),
-(24, 'Shelly Tran', '3200 Magnolia Dr, Jackson Hole', '456-78-9012', 'housekeeping');
-
+(24, 'Shelly Tran', '3200 Magnolia Dr, Jackson Hole', '456-78-9012', 'housekeeping'),
 -- Hotel 25 employees (Chicago 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (25, 'Corey Spencer', '3300 Redwood Ln, Chicago', '567-89-0123', 'manager'),
 (25, 'Loretta Gardner', '3400 Palm Blvd, Chicago', '678-90-1234', 'receptionist'),
 (25, 'Kirk Poole', '3500 Sequoia Rd, Chicago', '789-01-2345', 'housekeeping'),
 (25, 'Bernadette Aguilar', '3600 Juniper Ln, Chicago', '890-12-3456', 'receptionist'),
 (25, 'Rolando Bryant', '3700 Redbud Ave, Chicago', '901-23-4567', 'housekeeping'),
-(25, 'Miranda Fletcher', '3800 Hawthorn Dr, Chicago', '012-34-5678', 'housekeeping');
-
+(25, 'Miranda Fletcher', '3800 Hawthorn Dr, Chicago', '012-34-5678', 'housekeeping'),
 -- Hotel 26 employees (LA 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (26, 'Neal Patton', '3900 Sycamore Ln, LA', '123-45-6789', 'manager'),
 (26, 'Gretchen Norton', '4000 Dogwood Ave, LA', '234-56-7890', 'receptionist'),
 (26, 'Jimmie Figueroa', '4100 Hickory St, LA', '345-67-8901', 'housekeeping'),
 (26, 'Marlene Chandler', '4200 Willow Rd, LA', '456-78-9012', 'receptionist'),
-(26, 'Ross Blake', '4300 Magnolia Dr, LA', '567-89-0123', 'housekeeping');
-
+(26, 'Ross Blake', '4300 Magnolia Dr, LA', '567-89-0123', 'housekeeping'),
 -- Hotel 27 employees (NYC 5-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (27, 'Lance Malone', '4400 Redwood Ln, NYC', '678-90-1234', 'manager'),
 (27, 'Dianne Hopkins', '4500 Palm Blvd, NYC', '789-01-2345', 'receptionist'),
 (27, 'Clark Reeves', '4600 Sequoia Rd, NYC', '890-12-3456', 'housekeeping'),
 (27, 'Tricia Lowe', '4700 Juniper Ln, NYC', '901-23-4567', 'receptionist'),
 (27, 'Drew Cobb', '4800 Redbud Ave, NYC', '012-34-5678', 'housekeeping'),
-(27, 'Lynette Gibbs', '4900 Hawthorn Dr, NYC', '123-45-6789', 'housekeeping');
-
+(27, 'Lynette Gibbs', '4900 Hawthorn Dr, NYC', '123-45-6789', 'housekeeping'),
 -- Hotel 28 employees (Boston 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (28, 'Daryl Walsh', '5200 Hickory St, Boston', '456-78-9012', 'manager'),
 (28, 'Elsa Chambers', '5300 Willow Rd, Boston', '567-89-0123', 'receptionist'),
 (28, 'Ross Page', '5400 Magnolia Dr, Boston', '678-90-1234', 'housekeeping'),
 (28, 'Shelley Love', '5500 Redwood Ln, Boston', '789-01-2345', 'receptionist'),
-(28, 'Lonnie Brock', '5600 Palm Blvd, Boston', '890-12-3456', 'housekeeping');
-
+(28, 'Lonnie Brock', '5600 Palm Blvd, Boston', '890-12-3456', 'housekeeping'),
 -- Hotel 29 employees (San Francisco 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (29, 'Roderick Collier', '5700 Sequoia Rd, SF', '901-23-4567', 'manager'),
 (29, 'Jenna Nash', '5800 Juniper Ln, SF', '012-34-5678', 'receptionist'),
 (29, 'Damon Sharp', '5900 Redbud Ave, SF', '123-45-6789', 'housekeeping'),
 (29, 'Gayle Wilkins', '6000 Hawthorn Dr, SF', '234-56-7890', 'receptionist'),
 (29, 'Roosevelt Bowen', '6100 Sycamore Ln, SF', '345-67-8901', 'housekeeping'),
-(29, 'Kara Schroeder', '6200 Dogwood Ave, SF', '456-78-9012', 'housekeeping');
-
+(29, 'Kara Schroeder', '6200 Dogwood Ave, SF', '456-78-9012', 'housekeeping'),
 -- Hotel 30 employees (Seattle 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (30, 'Earnest Swanson', '6300 Hickory St, Seattle', '567-89-0123', 'manager'),
 (30, 'Eileen Noble', '6400 Willow Rd, Seattle', '678-90-1234', 'receptionist'),
 (30, 'Rudy Moss', '6500 Magnolia Dr, Seattle', '789-01-2345', 'housekeeping'),
 (30, 'Lola Townsend', '6600 Redwood Ln, Seattle', '890-12-3456', 'receptionist'),
-(30, 'Salvador Conway', '6700 Palm Blvd, Seattle', '901-23-4567', 'housekeeping');
-
+(30, 'Salvador Conway', '6700 Palm Blvd, Seattle', '901-23-4567', 'housekeeping'),
 -- Hotel 31 employees (Philadelphia 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (31, 'Fredrick Padilla', '6800 Sequoia Rd, Philadelphia', '012-34-5678', 'manager'),
 (31, 'Darla Joseph', '6900 Juniper Ln, Philadelphia', '123-45-6789', 'receptionist'),
 (31, 'Moses Chan', '7000 Redbud Ave, Philadelphia', '234-56-7890', 'housekeeping'),
 (31, 'Miriam Barrera', '7100 Hawthorn Dr, Philadelphia', '345-67-8901', 'receptionist'),
 (31, 'Perry Gillespie', '7200 Sycamore Ln, Philadelphia', '456-78-9012', 'housekeeping'),
-(31, 'Lena Savage', '7300 Dogwood Ave, Philadelphia', '567-89-0123', 'housekeeping');
-
+(31, 'Lena Savage', '7300 Dogwood Ave, Philadelphia', '567-89-0123', 'housekeeping'),
 -- Hotel 32 employees (Washington DC 5-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (32, 'Roosevelt Hooper', '7400 Hickory St, DC', '678-90-1234', 'manager'),
 (32, 'Maggie Mcintosh', '7500 Willow Rd, DC', '789-01-2345', 'receptionist'),
 (32, 'Drew Casey', '7600 Magnolia Dr, DC', '890-12-3456', 'housekeeping'),
 (32, 'Lena Kent', '7700 Redwood Ln, DC', '901-23-4567', 'receptionist'),
 (32, 'Darin Berg', '7800 Palm Blvd, DC', '012-34-5678', 'housekeeping'),
-(32, 'Lorena Mcpherson', '7900 Sequoia Rd, DC', '123-45-6789', 'housekeeping');
-
+(32, 'Lorena Mcpherson', '7900 Sequoia Rd, DC', '123-45-6789', 'housekeeping'),
 -- Hotel 33 employees (Boston 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (33, 'Wilson Daugherty', '8200 Hawthorn Dr, Boston', '456-78-9012', 'manager'),
 (33, 'Kristine Meadows', '8300 Sycamore Ln, Boston', '567-89-0123', 'receptionist'),
 (33, 'Rogelio Solomon', '8400 Dogwood Ave, Boston', '678-90-1234', 'housekeeping'),
 (33, 'Lela Higgins', '8500 Hickory St, Boston', '789-01-2345', 'receptionist'),
-(33, 'Gerardo Mcdaniel', '8600 Willow Rd, Boston', '890-12-3456', 'housekeeping');
-
+(33, 'Gerardo Mcdaniel', '8600 Willow Rd, Boston', '890-12-3456', 'housekeeping'),
 -- Hotel 34 employees (Charleston 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (34, 'Rudy Vaughn', '8700 Magnolia Dr, Charleston', '901-23-4567', 'manager'),
 (34, 'Della Espinoza', '8800 Redwood Ln, Charleston', '012-34-5678', 'receptionist'),
 (34, 'Elias Bauer', '8900 Palm Blvd, Charleston', '123-45-6789', 'housekeeping'),
 (34, 'Leticia Travis', '9000 Sequoia Rd, Charleston', '234-56-7890', 'receptionist'),
 (34, 'Erick Rasmussen', '9100 Juniper Ln, Charleston', '345-67-8901', 'housekeeping'),
-(34, 'Genevieve Hancock', '9200 Redbud Ave, Charleston', '456-78-9012', 'housekeeping');
-
+(34, 'Genevieve Hancock', '9200 Redbud Ave, Charleston', '456-78-9012', 'housekeeping'),
 -- Hotel 35 employees (San Francisco 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (35, 'Dewayne Francis', '9300 Hawthorn Dr, SF', '567-89-0123', 'manager'),
 (35, 'Lula Boone', '9400 Sycamore Ln, SF', '678-90-1234', 'receptionist'),
 (35, 'Roosevelt Norman', '9500 Dogwood Ave, SF', '789-01-2345', 'housekeeping'),
 (35, 'Daisy Cline', '9600 Hickory St, SF', '890-12-3456', 'receptionist'),
-(35, 'Darin Duffy', '9700 Willow Rd, SF', '901-23-4567', 'housekeeping');
-
+(35, 'Darin Duffy', '9700 Willow Rd, SF', '901-23-4567', 'housekeeping'),
 -- Hotel 36 employees (NYC 5-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (36, 'Rudy Oconnor', '9800 Magnolia Dr, NYC', '012-34-5678', 'manager'),
 (36, 'Jodi Bruce', '9900 Redwood Ln, NYC', '123-45-6789', 'receptionist'),
 (36, 'Darin Lang', '100 Palm Blvd, NYC', '234-56-7890', 'housekeeping'),
 (36, 'Johanna Combs', '200 Sequoia Rd, NYC', '345-67-8901', 'receptionist'),
 (36, 'Darin Blankenship', '300 Juniper Ln, NYC', '456-78-9012', 'housekeeping'),
-(36, 'Lora Adkins', '400 Redbud Ave, NYC', '567-89-0123', 'housekeeping');
-
+(36, 'Lora Adkins', '400 Redbud Ave, NYC', '567-89-0123', 'housekeeping'),
 -- Hotel 37 employees (Santa Fe 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (37, 'Wilson Henson', '700 Dogwood Ave, Santa Fe', '890-12-3456', 'manager'),
 (37, 'Kristine Blankenship', '800 Hickory St, Santa Fe', '901-23-4567', 'receptionist'),
 (37, 'Rogelio Keith', '900 Willow Rd, Santa Fe', '012-34-5678', 'housekeeping'),
 (37, 'Lela Bradshaw', '1000 Magnolia Dr, Santa Fe', '123-45-6789', 'receptionist'),
-(37, 'Gerardo Glass', '1100 Redwood Ln, Santa Fe', '234-56-7890', 'housekeeping');
-
+(37, 'Gerardo Glass', '1100 Redwood Ln, Santa Fe', '234-56-7890', 'housekeeping'),
 -- Hotel 38 employees (Savannah 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (38, 'Rudy Cohen', '1200 Palm Blvd, Savannah', '345-67-8901', 'manager'),
 (38, 'Della Mckay', '1300 Sequoia Rd, Savannah', '456-78-9012', 'receptionist'),
 (38, 'Elias Hayden', '1400 Juniper Ln, Savannah', '567-89-0123', 'housekeeping'),
 (38, 'Leticia Proctor', '1500 Redbud Ave, Savannah', '678-90-1234', 'receptionist'),
 (38, 'Erick Buckner', '1600 Hawthorn Dr, Savannah', '789-01-2345', 'housekeeping'),
-(38, 'Genevieve Donaldson', '1700 Sycamore Ln, Savannah', '890-12-3456', 'housekeeping');
-
+(38, 'Genevieve Donaldson', '1700 Sycamore Ln, Savannah', '890-12-3456', 'housekeeping'),
 -- Hotel 39 employees (Denver 3-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (39, 'Dewayne Cantrell', '1800 Dogwood Ave, Denver', '901-23-4567', 'manager'),
 (39, 'Lula Pittman', '1900 Hickory St, Denver', '012-34-5678', 'receptionist'),
 (39, 'Roosevelt Ferrell', '2000 Willow Rd, Denver', '123-45-6789', 'housekeeping'),
 (39, 'Daisy Stanton', '2100 Magnolia Dr, Denver', '234-56-7890', 'receptionist'),
-(39, 'Darin Contreras', '2200 Redwood Ln, Denver', '345-67-8901', 'housekeeping');
-
+(39, 'Darin Contreras', '2200 Redwood Ln, Denver', '345-67-8901', 'housekeeping'),
 -- Hotel 40 employees (St. Louis 4-star)
-INSERT INTO Employee (hotel_id, full_name, address, ssn_sin, role) VALUES
 (40, 'Rudy Schmitt', '2300 Palm Blvd, St. Louis', '456-78-9012', 'manager'),
 (40, 'Jodi Alvarado', '2400 Sequoia Rd, St. Louis', '567-89-0123', 'receptionist'),
 (40, 'Darin Mcmillan', '2500 Juniper Ln, St. Louis', '678-90-1234', 'housekeeping'),
@@ -1223,7 +1124,6 @@ INSERT INTO Booking (customer_id, room_id, check_in_date, check_out_date, status
 (8, 15, '2025-07-15', '2025-07-20', 'active'),
 (9, 17, '2025-08-01', '2025-08-05', 'active'),
 (10, 19, '2025-08-10', '2025-08-15', 'active'),
-
 -- Completed bookings
 (11, 21, '2025-01-01', '2025-01-05', 'completed'),
 (12, 23, '2025-01-10', '2025-01-15', 'completed'),
@@ -1235,7 +1135,6 @@ INSERT INTO Booking (customer_id, room_id, check_in_date, check_out_date, status
 (18, 35, '2025-03-10', '2025-03-15', 'completed'),
 (19, 37, '2025-03-20', '2025-03-25', 'completed'),
 (20, 39, '2025-04-01', '2025-04-05', 'completed'),
-
 -- Canceled bookings
 (21, 41, '2025-04-10', '2025-04-15', 'canceled'),
 (22, 43, '2025-04-20', '2025-04-25', 'canceled'),
@@ -1247,7 +1146,6 @@ INSERT INTO Booking (customer_id, room_id, check_in_date, check_out_date, status
 (28, 55, '2025-06-20', '2025-06-25', 'canceled'),
 (29, 57, '2025-07-01', '2025-07-05', 'canceled'),
 (30, 59, '2025-07-10', '2025-07-15', 'canceled'),
-
 -- More bookings to reach 100
 (31, 61, '2025-07-20', '2025-07-25', 'active'),
 (32, 63, '2025-08-01', '2025-08-05', 'active'),
@@ -1321,7 +1219,6 @@ INSERT INTO Booking (customer_id, room_id, check_in_date, check_out_date, status
 (50, 199, '2027-06-20', '2027-06-25', 'active');
 
 -- Insert rentings
-
 INSERT INTO Renting (booking_id, customer_id, room_id, employee_id, start_date, end_date)
 SELECT b.booking_id, b.customer_id, b.room_id,
        (SELECT employee_id FROM Employee
