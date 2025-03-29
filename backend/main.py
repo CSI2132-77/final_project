@@ -2,7 +2,12 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import psycopg2
 import uvicorn
-from database import database
+from database import Database
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s - %(message)s")
 
 DATABASE_URL = "postgresql://hotel_admin:admin@localhost:5432/hotel_management"
 setup_database_tables_path = "../sql/DatabaseImplementationCode.sql"
@@ -29,19 +34,25 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-db = database(DATABASE_URL)
-def setup_database():
-  """Set up the database connection and create tables"""
-  print("Setting up database...")
-  db.create_tables(setup_database_tables_path)
-  db.populate_tables(setup_database_populate_path)
-  print("Database setup completed.")
-setup_database()
+db = Database(DATABASE_URL)
+# def setup_database():
+#   """Set up the database connection and create tables"""
+#   logging.info("Setting up database...")
+#   db.create_tables(setup_database_tables_path)
+#   db.populate_tables(setup_database_populate_path)
+#   logging.info("Database setup completed.")
+# setup_database()
 
 @app.get("/", tags=["root"])
 async def read_root() -> dict:
     return {"message": "SUCCESS: You got the root GET"}
 
+@app.get("/hotel_chain/", tags=["hotel_chains"])
+async def get_hotel_chains() -> dict:
+    """Get all hotel chains"""
+    query = "SELECT * FROM hotel_chain"
+    result = db.get_data(query)
+    return {"hotel_chain": result}
 
 
 
