@@ -1,8 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 import psycopg2
 import uvicorn
+from database import database
+
+DATABASE_URL = "postgresql://hotel_admin:admin@localhost:5432/hotel_management"
+setup_database_tables_path = "../sql/DatabaseImplementationCode.sql"
+setup_database_populate_path = "../sql/DatabasePopulation.sql"
 
 app = FastAPI()
 
@@ -24,6 +28,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
+db = database(DATABASE_URL)
+def setup_database():
+  """Set up the database connection and create tables"""
+  print("Setting up database...")
+  db.create_tables(setup_database_tables_path)
+  db.populate_tables(setup_database_populate_path)
+  print("Database setup completed.")
+setup_database()
 
 @app.get("/", tags=["root"])
 async def read_root() -> dict:
