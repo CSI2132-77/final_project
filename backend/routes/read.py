@@ -27,6 +27,23 @@ logging.basicConfig(
 router = APIRouter()
 # db = Database()
 
+@router.get("/test")
+async def test(db: Session = Depends(database.get_db)):
+    # Test the database connection
+    room = db.query(Room).filter(Room.hotel_id == 1, Room.room_id == 224).first()
+    # Convert SQLAlchemy object to dictionary for JSON response
+    room_dict = {
+        "room_id": room.room_id,
+        "hotel_id": room.hotel_id,
+        "price": str(room.price),
+        "capacity": room.capacity,
+        "view_type": room.view_type,
+        "is_extendable": room.is_extendable
+    }
+    return room_dict
+
+
+
 
 #* TEST URL: /hotel-chain
 # This endpoint fetches all hotel chains from the database.

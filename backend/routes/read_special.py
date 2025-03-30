@@ -16,6 +16,10 @@ from models import (
     Customer
 )
 import database
+from schema import (
+    RoomCreate,
+    RoomResponse
+)
 
 # Set up logging
 logging.basicConfig(

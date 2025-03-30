@@ -5,8 +5,11 @@ from fastapi.responses import FileResponse
 import uvicorn
 import logging
 from typing import Any
-from routes.whole_table_gets import router as whole_table_gets
-from routes.specific_gets import router as speific_gets
+from routes.read import router as read
+from routes.read_special import router as read_special
+from routes.create import router as create
+from routes.update import router as update
+from routes.delete import router as delete
 
 logging.basicConfig(
     level=logging.INFO,
@@ -15,8 +18,11 @@ logging.basicConfig(
 # ***** FastAPI ***** #
 # Routes to organize the API endpoints
 app = FastAPI()
-app.include_router(whole_table_gets)
-app.include_router(speific_gets)
+app.include_router(create)
+app.include_router(read)
+app.include_router(read_special)
+app.include_router(update)
+app.include_router(delete)
 
 # Mount a static directory to serve static favicon
 app.mount("/static", StaticFiles(directory="static"), name="static")

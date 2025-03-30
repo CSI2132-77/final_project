@@ -48,10 +48,11 @@ class HotelContact(Base):
 
 class Room(Base):
     __tablename__  = 'room'
-    room_id        = Column(Integer, primary_key=True, autoincrement=True)
+    room_id        = Column(Integer, primary_key=True, autoincrement=True, index=True)
     hotel_id       = Column(Integer,
                         ForeignKey("hotel.hotel_id", ondelete="CASCADE"),
-                        nullable=False)
+                        nullable=False,
+                        index=True)
     price          = Column(Numeric(10, 2), nullable=False)
     capacity       = Column(String(10), nullable=False)
     view_type      = Column(String(10), nullable=False)
