@@ -1,75 +1,74 @@
-import psycopg2
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import sessionmaker
 import logging
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(levelname)s - %(message)s")
 
-class Database:
-    def __init__(self, db_url):
-        """Initialize the database connection."""
-        self.db_url = db_url
-        self.connection = None
+# Paths to SQL scripts
+setup_database_tables_path   = "../sql/DatabaseImplementationCode.sql"
+setup_database_populate_path = "../sql/DatabasePopulation.sql"
 
-        try:
-            self.connection = psycopg2.connect(self.db_url)
-            logging.info("Database connection established")
-        except psycopg2.Error as error:
-            logging.error(f"Error connecting to database: {error}")
-            raise
+# Create an engine that manages connections to the database
+try:
+    engine = create_engine(DATABASE_URL, isolation_level="AUTOCOMMIT")
+    Session = sessionmaker(bind=engine)
+    logging.info("Database connection established")
+except Exception as error:
+    logging.error(f"Error connecting to database: {error}")
+    raise
 
-    def close_connection(self):
-        """Close the database connection."""
-        if self.connection:
-            self.connection.close()
-            logging.info("Database connection closed")
+def execute_sql_script(filepath):
+    """Execute an SQL script from a file."""
+    try:
+        with open(filepath, 'r') as file:
+            sql_commands = file.read().split(';')
 
-    def execute_sql_script(self, filepath):
-        """Execute an SQL script from a file."""
-        try:
-            with self.connection.cursor() as cursor, open(filepath, 'r') as file:
-                sql_commands = file.read().split(';')
+        with engine.connect() as connection:
+            # Execute each command in the script
+            for command in sql_commands:
+                command = command.strip()
+                if command:
+                    connection.execute(text(command))
+            connection.commit()
+        logging.info("SQL script executed successfully")
+    except Exception as error:
+        logging.error(f"Error executing SQL script: {error}")
+        raise
 
-                for command in sql_commands:
-                    command = command.strip()
-                    if command:
-                        cursor.execute(command)
+def execute_query(query, params=None):
+    """Execute a single SQL query with optional parameters."""
+    try:
+        with engine.connect() as connection:
+            connection.execute(text(query), params)
+            connection.commit()
+        logging.info("Query executed successfully")
+    except Exception as error:
+        logging.error(f"Error executing query: {error}")
+        raise
 
-            self.connection.commit()
-            logging.info("SQL script executed successfully")
-        except Exception as error:
-            self.connection.rollback()
-            logging.error(f"Error executing SQL script: {error}")
-            raise
+def create_database():
+    """Create the database if it doesn't exist."""
+    execute_sql_script(setup_database_tables_path)
+    logging.info("Tables created successfully")
+    execute_sql_script(setup_database_populate_path)
+    logging.info("Tables populated successfully")
 
-    def execute_query(self, query, params=None):
-        """Execute a single SQL query with optional parameters."""
-        try:
-            with self.connection.cursor() as cursor:
-                cursor.execute(query, params)
-                self.connection.commit()
-            logging.info("Query executed successfully")
-        except Exception as error:
-            self.connection.rollback()
-            logging.error(f"Error executing query: {error}")
-            raise
-
-    def get_data(self, query, params=None):
-        """Execute a query and fetch all results."""
-        try:
-            with self.connection.cursor() as cursor:
-                cursor.execute(query, params)
-                result = cursor.fetchall()
-            logging.info("Data fetched successfully")
-            return result
-        except Exception as error:
-            logging.error(f"Error fetching data: {error}")
-            raise
-
-    def create_tables(self, filepath):
-        """Create tables from an SQL file."""
-        self.execute_sql_script(filepath)
-
-    def populate_tables(self, filepath):
-        """Populate tables from an SQL file."""
-        self.execute_sql_script(filepath)
+def get_db():
+    """
+    Get a new database session.
+    Required for FastAPI dependency injection into API routes
+    """
+    db = Session()
+    logging.info("New database session created")
+    try:
+        yield db
+    finally:
+        db.close()
+        logging.info("Database session closed")
