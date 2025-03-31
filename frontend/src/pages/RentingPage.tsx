@@ -1,7 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography, TextField, Button, Grid, Paper } from '@mui/material';
-import axios from 'axios';
+import { Typography, TextField, Box, Grid, Paper, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
+import { searchRooms, createBooking, getRentings, createRenting, getCustomers } from '../api';
+import StyledButton from '../components/StyledButton';
 import './RentingPage.css';
+
+interface Room {
+  room_id: number;
+  hotel_id: number;
+  price: number;
+  capacity: string;
+  view_type: string;
+  is_extendable: boolean;
+}
+
+interface Customer {
+  customer_id: number;
+  full_name: string;
+  address: string;
+  id_type: string;
+  id_number: string;
+  registration_date: string;
+}
 
 interface Renting {
   renting_id: number;
@@ -11,47 +30,110 @@ interface Renting {
   employee_id: number;
   start_date: string;
   end_date: string;
+  status: string;
 }
 
-function RentingPage() {
-  // Role state: either "customer" or "employee"
+const RentingPage: React.FC = () => {
   const [role, setRole] = useState<'customer' | 'employee'>('customer');
-  // List of active rentings (for employees)
   const [rentings, setRentings] = useState<Renting[]>([]);
-  // The renting record selected for payment insertion
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState<number | null>(null);
+  const [searchParams, setSearchParams] = useState({
+    start_date: '',
+    end_date: ''
+  });
+  const [paymentData, setPaymentData] = useState({
+    amount: '',
+    method: 'CreditCard'
+  });
   const [selectedRenting, setSelectedRenting] = useState<Renting | null>(null);
-  // Payment form state
-  const [paymentAmount, setPaymentAmount] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('');
 
+  // Fetch data based on role
   useEffect(() => {
     if (role === 'employee') {
-      // Fetch active rentings from backend
-      axios.get('/api/rentings')
-        .then((res) => setRentings(res.data))
-        .catch((err) => console.error(err));
+      getRentings().then(res => setRentings(res.data));
+      getCustomers().then(res => setCustomers(res.data));
+    } else {
+      // Clear employee-specific data when switching to customer view
+      setRentings([]);
+      setCustomers([]);
     }
   }, [role]);
 
-  const handleRoleChange = (newRole: 'customer' | 'employee') => {
-    setRole(newRole);
-    setSelectedRenting(null);
+  const handleSearch = () => {
+    if (!searchParams.start_date || !searchParams.end_date) {
+      alert('Please select both start and end dates');
+      return;
+    }
+    
+    searchRooms({
+      start_date: searchParams.start_date,
+      end_date: searchParams.end_date
+    })
+    .then(res => setRooms(res.data))
+    .catch(err => {
+      console.error(err);
+      alert('Error searching for rooms. Please check your dates.');
+    });
+  };
+
+  const handleCreateBooking = (roomId: number) => {
+    createBooking({
+      room_id: roomId,
+      customer_id: 1, // In a real app, this would be the logged-in customer's ID
+      start_date: searchParams.start_date,
+      end_date: searchParams.end_date
+    })
+    .then(res => {
+      alert('Booking created successfully!');
+      setRooms([]);
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Error creating booking');
+    });
+  };
+
+  const handleCreateRenting = (roomId: number) => {
+    if (!selectedCustomer) {
+      alert('Please select a customer first');
+      return;
+    }
+    
+    createRenting({
+      customer_id: selectedCustomer,
+      room_id: roomId,
+      employee_id: 1, // In a real app, this would be the logged-in employee's ID
+      start_date: searchParams.start_date,
+      end_date: searchParams.end_date
+    })
+    .then(res => {
+      setRentings(prev => [...prev, res.data]);
+      alert('Renting created successfully!');
+      setRooms([]);
+    })
+    .catch(err => {
+      console.error(err);
+      alert('Error creating renting');
+    });
   };
 
   const handlePaymentSubmit = () => {
-    if (!selectedRenting) return;
-    const payload = {
+    if (!selectedRenting || !paymentData.amount) {
+      alert('Please select a renting and enter payment amount');
+      return;
+    }
+    
+    // Here you would call your payment API
+    console.log('Payment submitted:', {
       renting_id: selectedRenting.renting_id,
-      amount: parseFloat(paymentAmount),
-      payment_method: paymentMethod
-    };
-    axios.post('/api/payments', payload)
-      .then((res) => {
-        console.log('Payment inserted', res.data);
-        setPaymentAmount('');
-        setPaymentMethod('');
-      })
-      .catch((err) => console.error(err));
+      amount: paymentData.amount,
+      method: paymentData.method
+    });
+    alert('Payment processed successfully!');
+    setPaymentData({ amount: '', method: 'CreditCard' });
+    setSelectedRenting(null);
   };
 
   return (
@@ -59,34 +141,170 @@ function RentingPage() {
       <Typography variant="h5" gutterBottom>
         Renting Management
       </Typography>
-      
-      {/* Role selection buttons */}
-      <Box sx={{ mb: 2 }}>
-        <Button variant={role === 'customer' ? "contained" : "outlined"} onClick={() => handleRoleChange('customer')} sx={{ mr: 2 }}>
-          Customer
-        </Button>
-        <Button variant={role === 'employee' ? "contained" : "outlined"} onClick={() => handleRoleChange('employee')}>
-          Employee
-        </Button>
+
+      {/* Role selection */}
+      <Box sx={{ mb: 3 }}>
+        <StyledButton 
+          variant={role === 'customer' ? "contained" : "outlined"} 
+          onClick={() => setRole('customer')}
+          sx={{ mr: 2 }}
+        >
+          Customer View
+        </StyledButton>
+        <StyledButton 
+          variant={role === 'employee' ? "contained" : "outlined"} 
+          onClick={() => setRole('employee')}
+        >
+          Employee View
+        </StyledButton>
       </Box>
 
-      {role === 'customer' ? (
-        <Typography variant="body1">
-          Customer view: Here you would search for rooms and make bookings.
+      {/* Common search form */}
+      <Paper className="search-form" elevation={3} sx={{ p: 2, mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Search for Available Rooms
         </Typography>
-      ) : (
-        <>
-          <Typography variant="body1" gutterBottom>
-            Employee view: Convert booking to renting or process direct renting.
+        <Grid container spacing={2}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Start Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={searchParams.start_date}
+              onChange={(e) => setSearchParams({...searchParams, start_date: e.target.value})}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="End Date"
+              type="date"
+              InputLabelProps={{ shrink: true }}
+              value={searchParams.end_date}
+              onChange={(e) => setSearchParams({...searchParams, end_date: e.target.value})}
+              fullWidth
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <StyledButton onClick={handleSearch}>
+              SEARCH ROOMS
+            </StyledButton>
+          </Grid>
+        </Grid>
+      </Paper>
+
+      {/* Customer-specific view */}
+      {role === 'customer' && rooms.length > 0 && (
+        <Paper elevation={1} className="room-list-paper" sx={{ p: 2, mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            Available Rooms
           </Typography>
-          <Paper sx={{ p: 2, mb: 2 }}>
-            <Typography variant="h6">Active Rentings</Typography>
+          <ul className="room-list">
+            {rooms.map(room => (
+              <li key={room.room_id}>
+                <div>
+                  <strong>Room #{room.room_id}</strong>
+                  <br />
+                  Hotel: {room.hotel_id} | Price: ${room.price} | Capacity: {room.capacity}
+                  <br />
+                  View: {room.view_type} | Extendable: {room.is_extendable ? 'Yes' : 'No'}
+                </div>
+                <div>
+                  <StyledButton 
+                    variant="text" 
+                    onClick={() => handleCreateBooking(room.room_id)}
+                  >
+                    Book Now
+                  </StyledButton>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Paper>
+      )}
+
+      {/* Employee-specific view */}
+      {role === 'employee' && (
+        <>
+          {/* Customer selection for employees */}
+          {customers.length > 0 && (
+            <Paper elevation={1} sx={{ p: 2, mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Select Customer
+              </Typography>
+              <FormControl fullWidth>
+                <InputLabel>Customer</InputLabel>
+                <Select
+                  value={selectedCustomer || ''}
+                  onChange={(e) => setSelectedCustomer(Number(e.target.value))}
+                  label="Customer"
+                >
+                  {customers.map(customer => (
+                    <MenuItem key={customer.customer_id} value={customer.customer_id}>
+                      {customer.full_name} (ID: {customer.customer_id})
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Paper>
+          )}
+
+          {/* Available rooms for employees */}
+          {rooms.length > 0 && (
+            <Paper elevation={1} className="room-list-paper" sx={{ p: 2, mb: 3 }}>
+              <Typography variant="h6" gutterBottom>
+                Available Rooms for Direct Renting
+              </Typography>
+              <ul className="room-list">
+                {rooms.map(room => (
+                  <li key={room.room_id}>
+                    <div>
+                      <strong>Room #{room.room_id}</strong>
+                      <br />
+                      Hotel: {room.hotel_id} | Price: ${room.price} | Capacity: {room.capacity}
+                      <br />
+                      View: {room.view_type} | Extendable: {room.is_extendable ? 'Yes' : 'No'}
+                    </div>
+                    <div>
+                      <StyledButton 
+                        variant="text" 
+                        onClick={() => handleCreateRenting(room.room_id)}
+                      >
+                        Rent Directly
+                      </StyledButton>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </Paper>
+          )}
+
+          {/* Active rentings */}
+          <Paper elevation={1} className="renting-list-paper" sx={{ p: 2, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Active Rentings
+            </Typography>
             {rentings.length > 0 ? (
               <ul className="renting-list">
-                {rentings.map((r) => (
-                  <li key={r.renting_id} onClick={() => setSelectedRenting(r)}>
-                    Renting ID: {r.renting_id}, Room: {r.room_id}, Customer: {r.customer_id}, 
-                    Start: {r.start_date}, End: {r.end_date}
+                {rentings.map(renting => (
+                  <li key={renting.renting_id}>
+                    <div>
+                      <strong>Renting #{renting.renting_id}</strong>
+                      <br />
+                      Room: {renting.room_id} | Customer: {renting.customer_id}
+                      <br />
+                      Dates: {new Date(renting.start_date).toLocaleDateString()} to {new Date(renting.end_date).toLocaleDateString()}
+                      <br />
+                      Status: {renting.status}
+                    </div>
+                    <div>
+                      <StyledButton 
+                        variant="text" 
+                        onClick={() => setSelectedRenting(renting)}
+                      >
+                        Process Payment
+                      </StyledButton>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -94,34 +312,42 @@ function RentingPage() {
               <Typography variant="body2">No active rentings found.</Typography>
             )}
           </Paper>
+
+          {/* Payment form */}
           {selectedRenting && (
-            <Paper sx={{ p: 2, mb: 2 }}>
-              <Typography variant="h6">
-                Insert Payment for Renting #{selectedRenting.renting_id}
+            <Paper elevation={3} sx={{ p: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                Process Payment for Renting #{selectedRenting.renting_id}
               </Typography>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField
-                    label="Payment Amount"
+                    label="Amount"
                     type="number"
-                    value={paymentAmount}
-                    onChange={(e) => setPaymentAmount(e.target.value)}
+                    value={paymentData.amount}
+                    onChange={(e) => setPaymentData({...paymentData, amount: e.target.value})}
                     fullWidth
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    label="Payment Method"
-                    placeholder="e.g., CreditCard, Cash"
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    fullWidth
-                  />
+                  <FormControl fullWidth>
+                    <InputLabel>Payment Method</InputLabel>
+                    <Select
+                      value={paymentData.method}
+                      label="Payment Method"
+                      onChange={(e) => setPaymentData({...paymentData, method: e.target.value})}
+                    >
+                      <MenuItem value="CreditCard">Credit Card</MenuItem>
+                      <MenuItem value="DebitCard">Debit Card</MenuItem>
+                      <MenuItem value="Cash">Cash</MenuItem>
+                      <MenuItem value="Check">Check</MenuItem>
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12}>
-                  <Button variant="contained" onClick={handlePaymentSubmit}>
-                    Submit Payment
-                  </Button>
+                  <StyledButton onClick={handlePaymentSubmit}>
+                    SUBMIT PAYMENT
+                  </StyledButton>
                 </Grid>
               </Grid>
             </Paper>
@@ -130,6 +356,6 @@ function RentingPage() {
       )}
     </Box>
   );
-}
+};
 
 export default RentingPage;
