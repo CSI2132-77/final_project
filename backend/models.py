@@ -181,3 +181,19 @@ class AvailableRoomsPerArea(Base):
     min_price       = Column(Numeric(10,2))
     max_price       = Column(Numeric(10,2))
     avg_price       = Column(Numeric(10,2))
+
+class HotelRoomCapacity(Base):
+    __tablename__ = "hotel_room_capacity"
+    hotel_id      = Column(Integer, primary_key=True)  # Assuming hotel_id is unique in the view
+    address       = Column(String)
+    category      = Column(String)
+    total_rooms   = Column(Integer)
+    single_rooms  = Column(Integer)
+    double_rooms  = Column(Integer)
+    suite_rooms   = Column(Integer)
+
+class RevenueByChain(Base):
+    __tablename__ = "revenue_by_chain"
+    chain_name    = Column(String, primary_key=True)  # Not a real PK but necessary for ORM
+    hotel_count   = Column(Integer)
+    total_revenue = Column(Numeric(10, 2))

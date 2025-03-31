@@ -13,6 +13,7 @@ from routes.create import router as create
 from routes.update import router as update
 from routes.delete import router as delete
 from routes.book_or_rent import router as book_or_rent
+from routes.views import router as views
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,6 +29,7 @@ app.include_router(read_extra)
 app.include_router(update)
 app.include_router(delete)
 app.include_router(book_or_rent)
+app.include_router(views)
 
 # Mount a static directory to serve static favicon
 app.mount("/static", StaticFiles(directory="static"), name="static")
