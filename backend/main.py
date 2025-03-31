@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import uvicorn
 import logging
-from database import create_database
+from database import create_database, initialize_database
 from typing import Any
 from routes.read import router as read
 from routes.read_special import router as read_special
@@ -60,7 +60,8 @@ app.add_middleware(
 #    Renting, Booking, Employee, Customer, Room_Problem, Room_Amenity, Room,
 #    Hotel_Contact, Hotel, Chain_Contact, Hotel_Chain
 # CASCADE;
-# create_database()
+create_database()
+initialize_database()
 
 @app.get("/", tags=["root"])
 async def read_root() -> dict:

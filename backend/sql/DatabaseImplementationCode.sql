@@ -5,7 +5,8 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 CREATE TABLE IF NOT EXISTS Hotel_Chain (
     chain_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
-    central_office_address TEXT NOT NULL
+    central_office_address TEXT NOT NULL,
+    hotel_count INTEGER DEFAULT 0
 );
 
 -- Chain Contacts (Multi-valued)
@@ -22,6 +23,7 @@ CREATE TABLE IF NOT EXISTS Hotel (
     hotel_id SERIAL PRIMARY KEY,
     chain_id INTEGER NOT NULL,
     address TEXT NOT NULL,
+    room_count INTEGER DEFAULT 0,
     category INTEGER NOT NULL CHECK (category BETWEEN 1 AND 5),
     FOREIGN KEY (chain_id) REFERENCES Hotel_Chain(chain_id) ON DELETE CASCADE
 );
@@ -111,6 +113,11 @@ CREATE TABLE IF NOT EXISTS Renting (
     FOREIGN KEY (room_id) REFERENCES Room(room_id) ON DELETE CASCADE,
     FOREIGN KEY (employee_id) REFERENCES Employee(employee_id) ON DELETE RESTRICT,
     CHECK (end_date >= start_date)
+);
+
+-- Booking Archive (for completed bookings)
+CREATE TABLE IF NOT EXISTS Booking_Archive (
+    LIKE Booking INCLUDING ALL
 );
 
 -- Prevent overlapping bookings

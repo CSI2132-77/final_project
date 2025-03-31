@@ -30,17 +30,24 @@ npm i --verbose
 ```
 
 ## Start Project
-1. Run backend in one terminal tab
+1. Run database in one terminal tab
+```bash
+# Start postgreSQL
+sudo service postgresql start && sudo service postgresql status
+# Login to the database as hotel_admin user
+psql -U hotel_admin -d hotel_management
+```
+2. Run backend in one terminal tab
 ```bash
 cd ./backend
 fastapi dev
 ```
-2. Run frontend in another terminal tab
+3. Run frontend in another terminal tab
 ```bash
 cd ./frontend
 npm run dev
 ```
 
-Backend runs on port **8000**, see debug docs at http://localhost:8000/docs
+Backend runs on port **8000**, see it at http://localhost:8000
 
 Frontend runs on port **3000**, see it at http://localhost:3000
