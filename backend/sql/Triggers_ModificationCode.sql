@@ -48,25 +48,65 @@ AFTER INSERT OR DELETE OR UPDATE OF hotel_id ON Room
 FOR EACH ROW
 EXECUTE FUNCTION update_room_count();
 
--- Trigger to enforce one manager per hotel
-CREATE OR REPLACE FUNCTION check_manager_count()
+-- -- Trigger to enforce one manager per hotel
+-- CREATE OR REPLACE FUNCTION check_manager_count()
+-- RETURNS TRIGGER AS $$
+-- BEGIN
+--     IF NEW.role = 'manager' AND (
+--         SELECT COUNT(*)
+--         FROM Employee
+--         WHERE hotel_id = NEW.hotel_id AND role = 'manager'
+--     ) >= 1 THEN
+--         RAISE EXCEPTION 'Each hotel can have only one manager';
+--     END IF;
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
+
+-- CREATE TRIGGER enforce_manager_count
+-- BEFORE INSERT OR UPDATE ON Employee
+-- FOR EACH ROW
+-- EXECUTE FUNCTION check_manager_count();
+-- Ensure every hotel has at least one manager using a trigger
+CREATE OR REPLACE FUNCTION ensure_manager_exists()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NEW.role = 'manager' AND (
-        SELECT COUNT(*)
+    IF NOT EXISTS (
+        SELECT 1
         FROM Employee
-        WHERE hotel_id = NEW.hotel_id AND role = 'manager'
-    ) >= 1 THEN
-        RAISE EXCEPTION 'Each hotel can have only one manager';
+        WHERE Employee.hotel_id = NEW.hotel_id AND Employee.role = 'manager'
+    ) THEN
+        RAISE EXCEPTION 'Every hotel must have at least one manager';
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER enforce_manager_count
-BEFORE INSERT OR UPDATE ON Employee
+CREATE TRIGGER ensure_manager_trigger
+AFTER INSERT OR UPDATE ON Employee
 FOR EACH ROW
-EXECUTE FUNCTION check_manager_count();
+WHEN (NEW.role = 'manager')
+EXECUTE FUNCTION ensure_manager_exists();
+
+-- Trigger to prevent deleting the only manager of a hotel
+CREATE OR REPLACE FUNCTION prevent_manager_deletion()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF OLD.role = 'manager' AND (
+        SELECT COUNT(*)
+        FROM Employee
+        WHERE hotel_id = OLD.hotel_id AND role = 'manager'
+    ) = 1 THEN
+        RAISE EXCEPTION 'Cannot delete the only manager of a hotel';
+    END IF;
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_prevent_manager_deletion
+BEFORE DELETE ON Employee
+FOR EACH ROW
+EXECUTE FUNCTION prevent_manager_deletion();
 
 -- Trigger to archive completed bookings automatically
 CREATE OR REPLACE FUNCTION archive_completed_bookings()

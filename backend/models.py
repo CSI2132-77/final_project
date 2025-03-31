@@ -205,13 +205,13 @@ class BookingArchive(Base):
     booking_id      = Column(Integer, primary_key=True, autoincrement=True)
     customer_id     = Column(Integer,
                             ForeignKey("customer.customer_id", ondelete="SET NULL"),
-                            nullable=False)
+                            nullable=True)
     room_id         = Column(Integer,
                         ForeignKey("room.room_id", ondelete="CASCADE"),
-                        nullable=False)
+                        nullable=True)
     check_in_date   = Column(Date, nullable=False)
     check_out_date  = Column(Date, nullable=False)
-    status          = Column(String(20), nullable=False, default='active')
+    status          = Column(String(20), nullable=False, default='completed')
     __table_args__  = (
         CheckConstraint(
             "status IN ('active', 'canceled', 'completed')",
@@ -219,4 +219,27 @@ class BookingArchive(Base):
         CheckConstraint(
             "check_out_date > check_in_date",
             name="check_dates_valid"),
+    )
+
+class RentingArchive(Base):
+    __tablename__  = 'renting_archive'
+    renting_id     = Column(Integer, primary_key=True, autoincrement=True)
+    booking_id     = Column(Integer,
+                         ForeignKey("booking_archive.booking_id", ondelete="SET NULL"),
+                         nullable=True)
+    customer_id    = Column(Integer,
+                             ForeignKey("customer.customer_id", ondelete="SET NULL"),
+                             nullable=True)
+    room_id        = Column(Integer,
+                         ForeignKey("room.room_id", ondelete="CASCADE"),
+                         nullable=False)
+    employee_id    = Column(Integer,
+                             ForeignKey("employee.employee_id", ondelete="RESTRICT"),
+                             nullable=False)
+    start_date     = Column(Date, nullable=False)
+    end_date       = Column(Date, nullable=False)
+    __table_args__ = (
+        CheckConstraint(
+            "end_date >= start_date",
+            name="check_end_date_after_start_date"),
     )
