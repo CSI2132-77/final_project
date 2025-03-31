@@ -1,0 +1,68 @@
+.booking-to-renting {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    background-color: #2b2b2b;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.booking-to-renting h2 {
+    color: #fff;
+    margin-bottom: 1.5rem;
+}
+
+.booking-to-renting form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: left;
+}
+
+.booking-to-renting label {
+    color: #ddd;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.booking-to-renting select,
+.booking-to-renting input {
+    width: 100%;
+    padding: 0.5rem;
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #555;
+    border-radius: 4px;
+}
+
+.booking-to-renting button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.booking-to-renting button:hover {
+    background-color: #45a049;
+}
+
+.message {
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+.message.success {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.message.error {
+    background-color: #f44336;
+    color: white;
+}

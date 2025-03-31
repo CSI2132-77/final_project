@@ -1,0 +1,24 @@
+.search-and-book-page {
+    padding: 1rem;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .search-form {
+    margin-bottom: 1rem;
+  }
+  
+  .rooms-container {
+    padding: 1rem;
+  }
+  
+  .room-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+  }
+  
