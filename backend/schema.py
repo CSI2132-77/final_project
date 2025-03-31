@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from datetime import date
 
 # Base model (shared attributes)
 class HotelChainBase(BaseModel):
@@ -46,6 +47,13 @@ class HotelBase(BaseModel):
 # Request model for creating a hotel
 class HotelCreate(HotelBase):
     chain_id: int
+
+class HotelUpdate(HotelBase):
+    hotel_id: int
+    # Optional fields for updating
+    chain_id: Optional[int] = None
+    address: Optional[str] = None
+    category: Optional[int] = None
 
 # Response model for returning data
 class HotelResponse(HotelBase):
@@ -248,7 +256,6 @@ class CustomerBase(BaseModel):
     address: str
     id_type: str
     id_number: str
-    registration_date: str
 
     class Config:
         orm_mode = True
@@ -269,4 +276,42 @@ class CustomerUpdate(CustomerBase):
 # Response model for returning data
 class CustomerResponse(CustomerBase):
     customer_id: int
+    registration_date: date
 
+class AvailableRoomsPerAreaResponse(BaseModel):
+    area: str
+    available_rooms: int
+    min_price: float
+    max_price: float
+    avg_price: float
+
+    class Config:
+        from_attributes = True  # This allows SQLAlchemy model conversion
+
+# Request model for deleting a customer
+class CustomerDelete(BaseModel):
+    customer_id: int
+    # No extra fields needed
+    class Config:
+        orm_mode = True
+
+# Request model for deleting a employee
+class EmployeeDelete(BaseModel):
+    employee_id: int
+    # No extra fields needed
+    class Config:
+        orm_mode = True
+
+# Request model for deleting a hotel
+class HotelDelete(BaseModel):
+    hotel_id: int
+    # No extra fields needed
+    class Config:
+        orm_mode = True
+
+# Request model for deleting a room
+class RoomDelete(BaseModel):
+    room_id: int
+    # No extra fields needed
+    class Config:
+        orm_mode = True

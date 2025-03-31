@@ -1,7 +1,7 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, PrimaryKeyConstraint, CheckConstraint
+from sqlalchemy import Column, Integer, Float, String, Text, ForeignKey, PrimaryKeyConstraint, CheckConstraint
 from sqlalchemy.orm import relationship, declarative_base
-from sqlalchemy import Numeric, Boolean
-from sqlalchemy import Date
+from sqlalchemy import Numeric, Boolean, Date
+from sqlalchemy.sql import func
 
 Base = declarative_base()
 
@@ -149,14 +149,22 @@ class Employee(Base):
 
 class Customer(Base):
     __tablename__     = 'customer'
-    customer_id       = Column(Integer, primary_key=True, autoincrement=True)
+    customer_id       = Column(Integer, primary_key=True)
     full_name         = Column(String(100), nullable=False)
     address           = Column(Text)
     id_type           = Column(String(20), nullable=False)
     id_number         = Column(String(50), nullable=False, unique=True)
-    registration_date = Column(Date, default="CURRENT_DATE")
+    registration_date = Column(Date, server_default=func.current_date())
     __table_args__    = (
         CheckConstraint(
             "id_type IN ('SSN', 'SIN', 'Driver License')",
             name="check_id_type_valid"),
     )
+
+class AvailableRoomsPerArea(Base):
+    __tablename__   = "Available_Rooms_Per_Area"
+    area = Column(String, primary_key=True)  # Not a real PK but necessary for ORM
+    available_rooms = Column(Integer)
+    min_price       = Column(Numeric(10,2))
+    max_price       = Column(Numeric(10,2))
+    avg_price       = Column(Numeric(10,2))
