@@ -1,70 +1,44 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { Container, Typography, Button } from "@mui/material";
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Box, Container } from '@mui/material';
+import HeaderBar from './components/HeaderBar';
+import Footer from './components/Footer';
+
+import HomePage from './pages/HomePage';
+import SearchAndBookPage from './pages/SearchAndBookPage';
+import ManageCustomersPage from './pages/ManageCustomersPage';
+import ManageEmployeesPage from './pages/ManageEmployeesPage';
+import ManageHotelsPage from './pages/ManageHotelsPage.tsx';
+import ManageRoomsPage from './pages/ManageRoomsPage';
+import RentingPage from './pages/RentingPage';
+import AggregatedCapacityViewPage from './pages/AggregatedCapacityViewPage';
+import AvailableRoomsViewPage from './pages/AvailableRoomsViewPage';
+
+import './App.css';
 
 function App() {
-  const [message, setMessage] = useState<string>("")
-
-  useEffect(() => {
-    // Call a get request using axios
-    // Then set the message state to the response data
-    axios.get("/api/")
-      .then(response => setMessage(response.data.message))
-      .catch(error => console.error("Error fetching data", error))
-      .finally(() => console.log("Data fetched"))
-  }, [])
-
   return (
-      <Container>
-          <Typography
-            variant="h3"
-            gutterBottom>
-              FastAPI + React + Vite + MUI (TypeScript)
-          </Typography>
-          <Typography
-            variant="body1">
-              {message || "Loading..."}
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            style={{ marginTop: '20px' }}>
-              Material UI Button
-          </Button>
-      </Container>
+    <Router>
+      <HeaderBar />
+      <Box className="app-content">
+        {/* Use a Container to limit content width while keeping header/footer full width */}
+        <Container maxWidth="md">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/search" element={<SearchAndBookPage />} />
+            <Route path="/manage/customers" element={<ManageCustomersPage />} />
+            <Route path="/manage/employees" element={<ManageEmployeesPage />} />
+            <Route path="/manage/hotels" element={<ManageHotelsPage />} />
+            <Route path="/manage/rooms" element={<ManageRoomsPage />} />
+            <Route path="/renting" element={<RentingPage />} />
+            <Route path="/view/capacity" element={<AggregatedCapacityViewPage />} />
+            <Route path="/view/available" element={<AvailableRoomsViewPage />} />
+          </Routes>
+        </Container>
+      </Box>
+      <Footer />
+    </Router>
   );
-
-
-
-
-/*
-  const [count, setCount] = useState(0)
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-*/
 }
 
-export default App
+export default App;
