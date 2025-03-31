@@ -2,20 +2,11 @@ import logging
 from typing import Any
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from models import (
-    HotelChain,
-    ChainContact,
-    Hotel,
-    HotelContact,
-    Room,
-    RoomAmenity,
-    RoomProblem,
-    Booking,
-    Renting,
-    Employee,
-    Customer
-)
 import database
+from models import (HotelChain, ChainContact, Hotel, HotelContact,
+                    Room, RoomAmenity, RoomProblem, Booking, Renting, Employee, Customer)
+from schema import (CustomerCreate, CustomerResponse, EmployeeCreate, EmployeeResponse,
+                    HotelCreate, HotelResponse, RoomCreate, RoomResponse)
 
 # Set up logging
 logging.basicConfig(
@@ -26,24 +17,6 @@ logging.basicConfig(
 # Initialize the FastAPI router
 router = APIRouter()
 # db = Database()
-
-@router.get("/test")
-async def test(db: Session = Depends(database.get_db)):
-    # Test the database connection
-    room = db.query(Room).filter(Room.hotel_id == 1, Room.room_id == 224).first()
-    # Convert SQLAlchemy object to dictionary for JSON response
-    room_dict = {
-        "room_id": room.room_id,
-        "hotel_id": room.hotel_id,
-        "price": str(room.price),
-        "capacity": room.capacity,
-        "view_type": room.view_type,
-        "is_extendable": room.is_extendable
-    }
-    return room_dict
-
-
-
 
 #* TEST URL: /hotel-chain
 # This endpoint fetches all hotel chains from the database.

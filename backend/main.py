@@ -7,6 +7,7 @@ import logging
 from typing import Any
 from routes.read import router as read
 from routes.read_special import router as read_special
+from routes.read_extra import router as read_extra
 from routes.create import router as create
 from routes.update import router as update
 from routes.delete import router as delete
@@ -21,6 +22,7 @@ app = FastAPI()
 app.include_router(create)
 app.include_router(read)
 app.include_router(read_special)
+app.include_router(read_extra)
 app.include_router(update)
 app.include_router(delete)
 
