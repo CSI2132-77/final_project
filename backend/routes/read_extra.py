@@ -19,6 +19,7 @@ logging.basicConfig(
 router = APIRouter()
 
 #* GET the total number of rooms in a hotel
+#* curl -X GET "http://localhost:8000/hotel-chain/cid=1/hid=1/total-rooms"
 @router.get("/hotel-chain/cid={chain_id}/hid={hotel_id}/total-rooms", tags=["hotel_total_rooms"])
 async def get_total_rooms_by_hotel(
     hotel_id: int,
@@ -43,6 +44,7 @@ async def get_total_rooms_by_hotel(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* GET the total number of rooms in each hotel
+#* curl -X GET "http://localhost:8000/hotel/total-rooms"
 @router.get("/hotel/total-rooms", tags=["hotel_total_rooms"])
 async def get_total_rooms_by_hotel(
     db: Session = Depends(database.get_db)
@@ -65,6 +67,7 @@ async def get_total_rooms_by_hotel(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /hotel-chain/cid=1/contacts
+#* curl -X GET "http://localhost:8000/hotel-chain/cid=1/contacts"
 @router.get("/hotel-chain/cid={chain_id}/contacts", tags=["hotel_chain_contacts"])
 async def get_contacts_by_chain(
     chain_id: int,
@@ -84,6 +87,7 @@ async def get_contacts_by_chain(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /hotel-chain/cid=1/hotels
+#* curl -X GET "http://localhost:8000/hotel-chain/cid=1/hotels"
 @router.get("/hotel-chain/cid={chain_id}/hotels", tags=["hotel_chain_hotels"])
 async def get_hotels_by_chain(
     chain_id: int,
@@ -107,6 +111,7 @@ async def get_hotels_by_chain(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /hotel-chain/cid=1/hid=1/contacts
+#* curl -X GET "http://localhost:8000/hotel-chain/cid=1/hid=1/contacts"
 @router.get("/hotel-chain/cid={chain_id}/hid={hotel_id}/contacts", tags=["hotel_contacts"])
 async def get_contacts_by_hotel(
     hotel_id: int,
@@ -126,6 +131,7 @@ async def get_contacts_by_hotel(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /hotel-chain/cid=1/hid=1/rooms
+#* curl -X GET "http://localhost:8000/hotel-chain/cid=1/hid=1/rooms"
 @router.get("/hotel-chain/cid={chain_id}/hid={hotel_id}/rooms", tags=["hotel_rooms"])
 async def get_rooms_by_hotel(
     hotel_id: int,
@@ -151,6 +157,7 @@ async def get_rooms_by_hotel(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /hotel-chain/cid=1/hid=1/rooms/rid=1/amenity
+#* curl -X GET "http://localhost:8000/hotel-chain/cid=1/hid=1/rooms/rid=1/amenity"
 @router.get("/hotel-chain/cid={chain_id}/hid={hotel_id}/rooms/rid={room_id}/amenity", tags=["hotel_room_ammenity"])
 async def get_amenity_by_room(
     room_id: int,
@@ -167,7 +174,7 @@ async def get_amenity_by_room(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /hotel-chain/cid=1/hid=1/rooms/rid=3/problems
-# This endpoint fetches problems for a specific room in a hotel
+#* curl -X GET "http://localhost:8000/hotel-chain/cid=1/hid=1/rooms/rid=3/problems"
 @router.get("/hotel-chain/cid={chain_id}/hid={hotel_id}/rooms/rid={room_id}/problems", tags=["hotel_room_problems"])
 async def get_problems_by_room(
     hotel_id: int,
@@ -194,6 +201,7 @@ async def get_problems_by_room(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /hotel-chain/cid=1/hid=1/rooms/rid=1/bookings
+#* curl -X GET "http://localhost:8000/hotel-chain/cid=1/hid=1/rooms/rid=1/bookings"
 @router.get("/hotel-chain/cid={chain_id}/hid={hotel_id}/rooms/rid={room_id}/bookings", tags=["hotel_room_rentings"])
 async def get_bookings_by_room(
     hotel_id: int,
@@ -227,6 +235,7 @@ async def get_bookings_by_room(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /hotel-chain/cid=1/hid=1/rooms/rid=1/rentings
+#* curl -X GET "http://localhost:8000/hotel-chain/cid=1/hid=1/rooms/rid=1/rentings"
 @router.get("/hotel-chain/cid={chain_id}/hid={hotel_id}/rooms/rid={room_id}/rentings", tags=["hotel_room_rentings"])
 async def get_rentings_by_room(
     room_id: int,
@@ -250,6 +259,7 @@ async def get_rentings_by_room(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /hotel-chain/cid=1/hid=1/employee
+#* curl -X GET "http://localhost:8000/hotel-chain/cid=1/hid=1/employee"
 @router.get("/hotel-chain/cid={chain_id}/hid={hotel_id}/employee", tags=["hotel_employees"])
 async def get_employees_by_hotel(
     hotel_id: int,
@@ -274,6 +284,7 @@ async def get_employees_by_hotel(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /customers/cusid=1
+#* curl -X GET "http://localhost:8000/customers/cusid=1"
 @router.get("/customers/cusid={customer_id}", tags=["customers"])
 async def get_customers_by_id(
     customer_id: int,

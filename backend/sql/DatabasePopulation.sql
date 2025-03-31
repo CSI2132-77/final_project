@@ -20,8 +20,8 @@ INSERT INTO Chain_Contact (chain_id, contact_type, value) VALUES
 (5, 'phone', '800-555-5555');
 
 -- Insert all 8 hotels for each chain (40 hotels total)
-INSERT INTO Hotel (chain_id, address, category) VALUES
 -- Grand Hotels contacts
+INSERT INTO Hotel (chain_id, address, category) VALUES
 (1, '100 Park Avenue, New York, NY', 5),
 (1, '200 Central Park South, New York, NY', 5),
 (1, '300 Sunset Boulevard, Los Angeles, CA', 4),
@@ -29,8 +29,9 @@ INSERT INTO Hotel (chain_id, address, category) VALUES
 (1, '500 Bourbon Street, New Orleans, LA', 3),
 (1, '600 Fisherman''s Wharf, San Francisco, CA', 3),
 (1, '700 Ocean Drive, Miami, FL', 4),
-(1, '800 Beacon Street, Boston, MA', 3),
+(1, '800 Beacon Street, Boston, MA', 3);
 -- Oceanview Resorts contacts
+INSERT INTO Hotel (chain_id, address, category) VALUES
 (2, '900 Beachfront Way, Miami, FL', 5),
 (2, '1000 Coastal Highway, Miami, FL', 4),
 (2, '1100 Harbor View, San Diego, CA', 4),
@@ -38,8 +39,9 @@ INSERT INTO Hotel (chain_id, address, category) VALUES
 (2, '1300 Shoreline Drive, Santa Monica, CA', 4),
 (2, '1400 Gulf Boulevard, Clearwater, FL', 3),
 (2, '1500 Ocean Avenue, Santa Barbara, CA', 5),
-(2, '1600 Seaside Lane, Myrtle Beach, SC', 3),
+(2, '1600 Seaside Lane, Myrtle Beach, SC', 3);
 -- Mountain Retreats contacts
+INSERT INTO Hotel (chain_id, address, category) VALUES
 (3, '1700 Alpine Way, Denver, CO', 4),
 (3, '1800 Mountain View, Aspen, CO', 5),
 (3, '1900 Ski Resort Lane, Park City, UT', 4),
@@ -47,8 +49,9 @@ INSERT INTO Hotel (chain_id, address, category) VALUES
 (3, '2100 Summit Road, Vail, CO', 5),
 (3, '2200 Canyon Boulevard, Sedona, AZ', 4),
 (3, '2300 Forest Trail, Lake Tahoe, CA', 3),
-(3, '2400 Wilderness Way, Jackson Hole, WY', 4),
+(3, '2400 Wilderness Way, Jackson Hole, WY', 4);
 -- Urban Stays contacts
+INSERT INTO Hotel (chain_id, address, category) VALUES
 (4, '2500 Downtown Plaza, Chicago, IL', 4),
 (4, '2600 Arts District, Los Angeles, CA', 3),
 (4, '2700 Financial Center, New York, NY', 5),
@@ -56,8 +59,9 @@ INSERT INTO Hotel (chain_id, address, category) VALUES
 (4, '2900 Tech Hub, San Francisco, CA', 4),
 (4, '3000 Waterfront, Seattle, WA', 3),
 (4, '3100 Historic Square, Philadelphia, PA', 4),
-(4, '3200 Capitol View, Washington, DC', 5),
+(4, '3200 Capitol View, Washington, DC', 5);
 -- Heritage Inns contacts
+INSERT INTO Hotel (chain_id, address, category) VALUES
 (5, '3300 Colonial Square, Boston, MA', 3),
 (5, '3400 Antebellum Manor, Charleston, SC', 4),
 (5, '3500 Victorian Mansion, San Francisco, CA', 3),

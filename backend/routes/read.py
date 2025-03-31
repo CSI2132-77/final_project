@@ -30,7 +30,8 @@ async def get_hotel_chains(db: Session = Depends(database.get_db)) -> list[dict[
             {
                 "chain_id": chain.chain_id,
                 "name": chain.name,
-                "central_office_address": chain.central_office_address
+                "central_office_address": chain.central_office_address,
+                "hotel_count": chain.hotel_count,
             }
         for chain in hotel_chains ]
         return hotel_chains
@@ -72,6 +73,7 @@ async def get_hotels(db: Session = Depends(database.get_db)) -> list[dict[str, A
                 "hotel_id": hotel.hotel_id,
                 "chain_id": hotel.chain_id,
                 "address": hotel.address,
+                "room_count": hotel.room_count,
                 "category": hotel.category
             }
             for hotel in hotels
