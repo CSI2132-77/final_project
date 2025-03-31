@@ -1,0 +1,42 @@
+.manage-employees {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .employee-form {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background-color: #2b2b2b; /* Slightly lighter than main background */
+  }
+  
+  .employee-list-paper {
+    padding: 1rem;
+    background-color: #2b2b2b;
+    text-align: left;
+  }
+  
+  .employee-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .employee-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .css-11nsb57-MuiGrid-root {
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .css-1cth5tq-MuiGrid-root {
+    justify-content: space-between
+  }

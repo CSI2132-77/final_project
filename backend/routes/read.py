@@ -177,16 +177,17 @@ async def get_bookings(db: Session = Depends(database.get_db)) -> list[dict[str,
         bookings = db.query(Booking).all()
         logging.info(f"Fetched {len(bookings)} bookings")
         # Convert SQLAlchemy objects to dictionaries for JSON response
-        bookings = {
-            booking.booking_id: {
+        bookings = [
+            {
+                "booking_id": booking.booking_id,
                 "customer_id": booking.customer_id,
                 "room_id": booking.room_id,
-                "check_in_date": booking.check_in_date,
-                "check_out_date": booking.check_out_date,
+                "check_in_date": booking.check_in_date.isoformat(),
+                "check_out_date": booking.check_out_date.isoformat(),
                 "status": booking.status
             }
             for booking in bookings
-        }
+         ]
         return bookings
     except Exception as e:
         logging.error(f"Error fetching bookings: {e}")
