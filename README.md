@@ -30,12 +30,19 @@ npm i --verbose
 ```
 
 ## Start Project
-1. Run backend in one terminal tab
+1. Run postgresSQL in one terminal tab
+```bash
+# Start postgreSQL
+sudo service postgresql start && sudo service postgresql status
+# Login to database
+psql -U hotel_admin -d hotel_management
+```
+2. Run backend in another terminal tab
 ```bash
 cd ./backend
 fastapi dev
 ```
-2. Run frontend in another terminal tab
+3. Run frontend in another terminal tab
 ```bash
 cd ./frontend
 npm run dev

@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 import uvicorn
 import logging
 from typing import Any
+from database import create_database
 from routes.read import router as read
 from routes.read_special import router as read_special
 from routes.read_extra import router as read_extra
@@ -49,6 +50,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"]
 )
+
+#* regenerate the database if needed
+#* remove datatable with
+#* DROP TABLE IF EXISTS
+#*    Renting, Booking, Employee, Customer, Room_Problem, Room_Amenity, Room,
+#*    Hotel_Contact, Hotel, Chain_Contact, Hotel_Chain
+#* CASCADE;
+# create_database()
 
 @app.get("/", tags=["root"])
 async def read_root() -> dict:

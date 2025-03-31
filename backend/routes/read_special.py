@@ -42,7 +42,7 @@ router = APIRouter()
 #* curl -X GET "http://localhost:8000/room/available?chain_id=1"
 #* curl -X GET "http://localhost:8000/room/available?hotel_id=99"
 #* curl -X GET "http://localhost:8000/room/available?chain_id=1&hotel_id=1&start_date=2025-04-02&end_date=2025-04-05&capacity=suite&address=100%20Park%20Avenue%2C%20New%20York%2C%20NY&category=5&total_rooms=6&price=600.00"
-@router.get("/room/available", tags=["rooms"], response_model=RoomResponse)
+@router.get("/room/available", tags=["rooms"])
 async def get_available_rooms(
     chain_id: int = None,
     hotel_id: int = None,
