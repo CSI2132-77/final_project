@@ -1,12 +1,26 @@
 # final_project
+
 Repository link: https://github.com/CSI2132-77/final_project
 
 ## SETUP
+
 1. clone repo with
 ```bash
 git clone https://github.com/CSI2132-77/final_project.git
 ```
-2. set up Backend
+
+## Start Project with Docker
+
+```bash
+# start docker desktop before running below commands
+# from root
+docker-compose down -v # wipes DB in container
+docker-compose up --build # rebuilds Frontend/Backend/DB
+```
+
+## Start Project (Altnernative)
+
+1. set up Backend
 ```bash
 # create venv
 python -m venv ./backend/.venv
@@ -15,7 +29,8 @@ source ./backend/.venv/bin/activate
 # install deps
 pip install -r ./requirements.txt
 ```
-3. set up Frontend
+
+2. set up Frontend
 ```bash
 # Install NVM if not alread
 sudo apt update
@@ -29,20 +44,21 @@ cd ./frontend
 npm i --verbose
 ```
 
-## Start Project
-1. Run database in one terminal tab
+3. Run database in one terminal tab
 ```bash
 # Start postgreSQL
 sudo service postgresql start && sudo service postgresql status
 # Login to the database as hotel_admin user
 psql -U hotel_admin -d hotel_management
 ```
-2. Run backend in one terminal tab
+
+4. Run backend in one terminal tab
 ```bash
 cd ./backend
 fastapi dev
 ```
-3. Run frontend in another terminal tab
+
+5. Run frontend in another terminal tab
 ```bash
 cd ./frontend
 npm run dev
