@@ -175,7 +175,7 @@ class Customer(Base):
     )
 
 class AvailableRoomsPerArea(Base):
-    __tablename__   = "Available_Rooms_Per_Area"
+    __tablename__   = "available_rooms_per_area"
     area = Column(String, primary_key=True)  # Not a real PK but necessary for ORM
     available_rooms = Column(Integer)
     min_price       = Column(Numeric(10,2))

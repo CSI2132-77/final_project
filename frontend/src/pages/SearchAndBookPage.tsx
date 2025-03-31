@@ -12,7 +12,7 @@ import {
   AlertTitle,
   Chip
 } from '@mui/material';
-import { searchRooms } from '../api';
+import { searchRooms } from '../api/index';
 import StyledButton from '../components/StyledButton';
 import './SearchAndBookPage.css';
 
@@ -60,7 +60,6 @@ const SearchAndBookPage: React.FC = () => {
 
     setIsLoading(true);
     setMessage(null);
-    
     try {
       const params = {
         start_date: criteria.checkIn,

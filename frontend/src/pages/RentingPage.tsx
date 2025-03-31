@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, TextField, Box, Grid, Paper, Button, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
-import { searchRooms, createBooking, getRentings, createRenting, getCustomers } from '../api';
+import { searchRooms, createBooking, getRentings, checkInPerson, getCustomers } from '../api';
 import StyledButton from '../components/StyledButton';
 import './RentingPage.css';
 
@@ -30,7 +30,6 @@ interface Renting {
   employee_id: number;
   start_date: string;
   end_date: string;
-  status: string;
 }
 
 const RentingPage: React.FC = () => {
@@ -52,10 +51,9 @@ const RentingPage: React.FC = () => {
   // Fetch data based on role
   useEffect(() => {
     if (role === 'employee') {
-      getRentings().then(res => setRentings(res.data));
-      getCustomers().then(res => setCustomers(res.data));
+      getRentings().then(res => setRentings(res));
+      getCustomers().then(res => setCustomers(res));
     } else {
-      // Clear employee-specific data when switching to customer view
       setRentings([]);
       setCustomers([]);
     }
@@ -80,10 +78,11 @@ const RentingPage: React.FC = () => {
 
   const handleCreateBooking = (roomId: number) => {
     createBooking({
-      room_id: roomId,
       customer_id: 1, // In a real app, this would be the logged-in customer's ID
-      start_date: searchParams.start_date,
-      end_date: searchParams.end_date
+      room_id: roomId,
+      check_in_date: searchParams.start_date,
+      check_out_date: searchParams.end_date,
+      status: 'active'
     })
     .then(res => {
       alert('Booking created successfully!');
@@ -91,7 +90,7 @@ const RentingPage: React.FC = () => {
     })
     .catch(err => {
       console.error(err);
-      alert('Error creating booking');
+      alert(err.response?.data?.detail || 'Error creating booking');
     });
   };
 
@@ -101,7 +100,7 @@ const RentingPage: React.FC = () => {
       return;
     }
     
-    createRenting({
+    checkInPerson({
       customer_id: selectedCustomer,
       room_id: roomId,
       employee_id: 1, // In a real app, this would be the logged-in employee's ID
@@ -109,13 +108,13 @@ const RentingPage: React.FC = () => {
       end_date: searchParams.end_date
     })
     .then(res => {
-      setRentings(prev => [...prev, res.data]);
+      setRentings(prev => [...prev, res]);
       alert('Renting created successfully!');
       setRooms([]);
     })
     .catch(err => {
       console.error(err);
-      alert('Error creating renting');
+      alert(err.response?.data?.detail || 'Error creating renting');
     });
   };
 
@@ -294,8 +293,6 @@ const RentingPage: React.FC = () => {
                       Room: {renting.room_id} | Customer: {renting.customer_id}
                       <br />
                       Dates: {new Date(renting.start_date).toLocaleDateString()} to {new Date(renting.end_date).toLocaleDateString()}
-                      <br />
-                      Status: {renting.status}
                     </div>
                     <div>
                       <StyledButton 

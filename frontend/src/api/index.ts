@@ -3,13 +3,84 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:8000';
 
 // Room Search and Booking
+
+export interface Booking {
+  booking_id: number;
+  customer_id: number;
+  room_id: number;
+  check_in_date: string;
+  check_out_date: string;
+  status: 'active' | 'canceled' | 'completed';
+}
+
+export interface Renting {
+  renting_id: number;
+  booking_id: number | null;
+  customer_id: number;
+  room_id: number;
+  employee_id: number;
+  start_date: string;
+  end_date: string;
+}
+
 export const searchRooms = async (params: any) => {
   return axios.get(`${API_BASE_URL}/room/available`, { params });
 };
 
-export const createBooking = async (data: any) => {
-  return axios.post(`${API_BASE_URL}/booking`, data);
+// Renting
+export const deleteRenting = async (renting_id: number): Promise<void> => {
+  await axios.delete(`${API_BASE_URL}/renting/delete`, { 
+    data: { renting_id } 
+  });
 };
+
+export const getRentings = async (): Promise<Renting[]> => {
+  const response = await axios.get(`${API_BASE_URL}/renting`);
+  return response.data;
+};
+
+export const createRenting = async (data: any) => {
+  return axios.post(`${API_BASE_URL}/renting`, data);
+};
+
+// Booking
+export const createBooking = async (data: {
+  customer_id: number;
+  room_id: number;
+  check_in_date: string;
+  check_out_date: string;
+  status?: 'active' | 'canceled' | 'completed';
+}): Promise<Booking> => {
+  const response = await axios.post(`${API_BASE_URL}/book`, data);
+  return response.data;
+};
+
+export const checkInOnline = async (data: {
+  booking_id: number;
+  employee_id: number;
+}): Promise<Renting> => {
+  const response = await axios.post(`${API_BASE_URL}/check_in/online`, data);
+  return response.data;
+};
+
+export const checkInPerson = async (data: {
+  customer_id: number;
+  room_id: number;
+  employee_id: number;
+  start_date: string;
+  end_date: string;
+}): Promise<Renting> => {
+  const response = await axios.post(`${API_BASE_URL}/check_in/in_person`, data);
+  return response.data;
+};
+
+export const deleteBooking = async (booking_id: number): Promise<void> => {
+  await axios.delete(`${API_BASE_URL}/booking/delete`, { 
+    data: { booking_id } 
+  });
+};
+
+
 
 // Customers
 export const getCustomers = async () => {
@@ -80,19 +151,43 @@ export const deleteRoom = async (data: { room_id: number }) => {
 };
 
 // Views
-export const getAggregatedCapacity = async () => {
-  return axios.get(`${API_BASE_URL}/room/available`);
+
+export interface HotelRoomCapacity {
+  hotel_id: number;
+  address: string;
+  category: number;
+  total_rooms: number;
+  single_rooms: number;
+  double_rooms: number;
+  suite_rooms: number;
+}
+
+export interface AvailableRoomsPerArea {
+  area: string;
+  available_rooms: number;
+  min_price: number;
+  max_price: number;
+  avg_price: number;
+}
+
+export const fetchHotelRoomCapacity = async (): Promise<HotelRoomCapacity[]> => {
+try {
+  const response = await axios.get<HotelRoomCapacity[]>(`${API_BASE_URL}/hotel-room-capacity`);
+  return response.data;
+} catch (error) {
+  console.error('Error fetching capacity:', error);
+  throw error;
+}
 };
 
-export const getAvailableRoomsPerArea = async () => {
-  return axios.get(`${API_BASE_URL}/room/available`);
+export const fetchAvailableRoomsPerArea = async (): Promise<AvailableRoomsPerArea[]> => {
+  try {
+  const response = await axios.get<AvailableRoomsPerArea[]>(`${API_BASE_URL}/available-rooms-per-area`);
+  return response.data;
+} catch (error) {
+  console.error('Error fetching available rooms:', error);
+  throw error;
+}
 };
 
-// Renting
-export const getRentings = async () => {
-  return axios.get(`${API_BASE_URL}/renting`);
-};
 
-export const createRenting = async (data: any) => {
-  return axios.post(`${API_BASE_URL}/renting`, data);
-};

@@ -1,59 +1,84 @@
-import { useEffect, useState } from 'react';
-import { Typography, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Paper } from '@mui/material';
-import axios from 'axios';
-import './AggregatedCapacityViewPage.css';
+// src/views/AggregatedCapacityView.tsx
+import React, { useEffect, useState } from 'react';
+import { 
+  Typography, 
+  TableContainer, 
+  Table, 
+  TableHead, 
+  TableRow, 
+  TableCell, 
+  TableBody, 
+  Paper,
+  CircularProgress,
+  Box
+} from '@mui/material';
+import { fetchHotelRoomCapacity } from '../api/index';
 
-// import { API_BASE_URL } from '../apiConfig';
-// axios.get(`${API_BASE_URL}/rooms/search`, { params });
-
-
-interface CapacityData {
-  hotel_id: number;
-  address: string;
-  category: number;
-  total_rooms: number;
-  single_rooms: number;
-  double_rooms: number;
-  suite_rooms: number;
-}
-
-function AggregatedCapacityViewPage() {
-  const [data, setData] = useState<CapacityData[]>([]);
+const AggregatedCapacityView = () => {
+  const [data, setData] = useState<HotelRoomCapacity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    axios.get('/api/view/aggregated-capacity')
-      .then(res => setData(res.data))
-      .catch(err => console.error(err));
+    const loadData = async () => {
+      try {
+        const capacityData = await fetchHotelRoomCapacity();
+        setData(capacityData);
+      } catch (err) {
+        setError('Failed to fetch hotel room capacity data');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
 
-  return (
-    <div className="capacity-view">
-      <Typography variant="h5" gutterBottom>
-        Aggregated Room Capacity
+  if (loading) {
+    return (
+      <Box display="flex" justifyContent="center" mt={4}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Typography color="error" variant="h6" gutterBottom>
+        {error}
       </Typography>
-      <TableContainer component={Paper}>
-        <Table className="capacity-table">
+    );
+  }
+
+  return (
+    <div>
+      <Typography variant="h4" gutterBottom>
+        Hotel Room Capacity
+      </Typography>
+      <TableContainer component={Paper} elevation={3}>
+        <Table>
           <TableHead>
-            <TableRow>
+            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
               <TableCell>Hotel ID</TableCell>
               <TableCell>Address</TableCell>
               <TableCell>Category</TableCell>
-              <TableCell>Total Rooms</TableCell>
-              <TableCell>Single</TableCell>
-              <TableCell>Double</TableCell>
-              <TableCell>Suite</TableCell>
+              <TableCell align="right">Total Rooms</TableCell>
+              <TableCell align="right">Single</TableCell>
+              <TableCell align="right">Double</TableCell>
+              <TableCell align="right">Suite</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map((row, idx) => (
-              <TableRow key={idx}>
+            {data.map((row) => (
+              <TableRow key={row.hotel_id} hover>
                 <TableCell>{row.hotel_id}</TableCell>
                 <TableCell>{row.address}</TableCell>
                 <TableCell>{row.category}</TableCell>
-                <TableCell>{row.total_rooms}</TableCell>
-                <TableCell>{row.single_rooms}</TableCell>
-                <TableCell>{row.double_rooms}</TableCell>
-                <TableCell>{row.suite_rooms}</TableCell>
+                <TableCell align="right">{row.total_rooms}</TableCell>
+                <TableCell align="right">{row.single_rooms}</TableCell>
+                <TableCell align="right">{row.double_rooms}</TableCell>
+                <TableCell align="right">{row.suite_rooms}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -61,6 +86,6 @@ function AggregatedCapacityViewPage() {
       </TableContainer>
     </div>
   );
-}
+};
 
-export default AggregatedCapacityViewPage;
+export default AggregatedCapacityView;
