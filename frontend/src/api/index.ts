@@ -81,11 +81,11 @@ export const deleteRoom = async (data: { room_id: number }) => {
 
 // Views
 export const getAggregatedCapacity = async () => {
-  return axios.get(`${API_BASE_URL}/hotel/total-rooms`);
+  return axios.get(`${API_BASE_URL}/room/available`);
 };
 
 export const getAvailableRoomsPerArea = async () => {
-  return axios.get(`${API_BASE_URL}/hotel-chain/cid=1/hid=1/total-rooms`);
+  return axios.get(`${API_BASE_URL}/room/available`);
 };
 
 // Renting
