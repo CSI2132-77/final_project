@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, TextField, Box, Grid, Paper, Checkbox, FormControlLabel } from '@mui/material';
 import axios from 'axios';
-import StyledButton from '../components/StyledButton';
+import StyledButton from '../../components/StyledButton';
 import './ManageRoomsPage.css';
 
 const API_BASE_URL = 'http://localhost:8000';

@@ -12,8 +12,8 @@ import {
   AlertTitle,
   Chip
 } from '@mui/material';
-import { searchRooms } from '../api/index';
-import StyledButton from '../components/StyledButton';
+import { searchRooms } from '../../api/index';
+import StyledButton from '../../components/StyledButton';
 import './SearchAndBookPage.css';
 
 interface Room {

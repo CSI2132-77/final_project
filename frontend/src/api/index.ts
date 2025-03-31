@@ -2,8 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8000';
 
-// Room Search and Booking
-
+// Interfaces
 export interface Booking {
   booking_id: number;
   customer_id: number;
@@ -39,11 +38,24 @@ export const getRentings = async (): Promise<Renting[]> => {
   return response.data;
 };
 
-export const createRenting = async (data: any) => {
-  return axios.post(`${API_BASE_URL}/renting`, data);
+export const createRenting = async (data: {
+  customer_id: number;
+  room_id: number;
+  employee_id: number;
+  start_date: string;
+  end_date: string;
+}): Promise<Renting> => {
+  const response = await axios.post(`${API_BASE_URL}/renting`, data);
+  return response.data;
 };
 
 // Booking
+
+export const getBookings = async (): Promise<Record<number, Booking>> => {
+  const response = await axios.get(`${API_BASE_URL}/booking`);
+  return response.data;
+};
+
 export const createBooking = async (data: {
   customer_id: number;
   room_id: number;

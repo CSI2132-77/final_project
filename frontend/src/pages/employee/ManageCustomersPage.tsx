@@ -5,8 +5,8 @@ import {
   createCustomer, 
   updateCustomer, 
   deleteCustomer 
-} from '../api';
-import StyledButton from '../components/StyledButton';
+} from '../../api';
+import StyledButton from '../../components/StyledButton';
 import './ManageCustomersPage.css';
 
 interface Customer {

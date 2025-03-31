@@ -5,8 +5,8 @@ import {
   createEmployee, 
   updateEmployee, 
   deleteEmployee 
-} from '../api';
-import StyledButton from '../components/StyledButton';
+} from '../../api';
+import StyledButton from '../../components/StyledButton';
 import './ManageEmployeesPage.css';
 
 interface Employee {

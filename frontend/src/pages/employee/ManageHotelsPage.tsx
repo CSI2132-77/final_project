@@ -5,8 +5,8 @@ import {
   createHotel, 
   updateHotel, 
   deleteHotel 
-} from '../api';
-import StyledButton from '../components/StyledButton';
+} from '../../api';
+import StyledButton from '../../components/StyledButton';
 import './ManageHotelsPage.css';
 
 interface Hotel {
