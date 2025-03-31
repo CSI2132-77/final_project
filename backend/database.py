@@ -29,7 +29,7 @@ try:
     Session = sessionmaker(bind=engine)
     logging.info("Database connection established")
 except Exception as error:
-    logging.error(f"Error connecting to database: {error}")
+    logging.error(f"ERROR - connecting to database: {error}")
     raise
 
 def create_database():
@@ -48,9 +48,9 @@ def create_database():
             if not result.fetchone():
                 # Create the database if it doesn't exist
                 connection.execute(text(f"CREATE DATABASE {POSTGRES_DB}"))
-                logging.info(f"Database '{POSTGRES_DB}' created successfully")
+                logging.info(f"SUCCESS - Database '{POSTGRES_DB}' created")
             else:
-                logging.info(f"Database '{POSTGRES_DB}' already exists, skipping creation of user: '{POSTGRES_USER}'")
+                logging.info(f"EXISTANCE - Database '{POSTGRES_DB}' already exists, skipping creation of user: '{POSTGRES_USER}'")
 
             # Create the user with the specified credentials if it doesn't exist
             result = connection.execute(
@@ -58,9 +58,9 @@ def create_database():
             )
             if not result.fetchone():
                 connection.execute(text(f"CREATE USER {POSTGRES_USER} WITH PASSWORD '{POSTGRES_PASSWORD}'"))
-                logging.info(f"User '{POSTGRES_USER}' created successfully")
+                logging.info(f"SUCCESS - User '{POSTGRES_USER}'")
             else:
-                logging.info(f"User '{POSTGRES_USER}' already exists, skipping altering role for {POSTGRES_USER}")
+                logging.info(f"EXISTANCE - User '{POSTGRES_USER}' already exists, skipping altering role for {POSTGRES_USER}")
 
             # Set configurations for the user
             connection.execute(text(f"ALTER ROLE {POSTGRES_USER} SET client_encoding TO 'utf8'"))
@@ -72,7 +72,7 @@ def create_database():
             connection.execute(text(f"GRANT ALL PRIVILEGES ON DATABASE {POSTGRES_DB} TO {POSTGRES_USER}"))
             logging.info(f"Granted all privileges on database '{POSTGRES_DB}' to user '{POSTGRES_USER}'")
     except Exception as error:
-        logging.error(f"Error creating database or user: {error}")
+        logging.error(f"ERROR - creating database or user: {error}")
         raise
 
 def execute_sql_script(filepath):
@@ -85,29 +85,33 @@ def execute_sql_script(filepath):
             connection.execute(text(sql_file))
             connection.commit()
 
-        logging.info("SQL script executed successfully")
+        logging.info("SUCCESS - SQL script executed")
     except Exception as error:
-        logging.error(f"Error executing SQL script {filepath}: {error}")
+        logging.error(f"ERROR - executing SQL script {filepath}: {error}")
         raise
 
 def execute_sql_script_ordered(filepath):
-    """Execute an SQL script from a file delimited by ;"""
+    """Execute an SQL script from a file, ensuring statements execute in order."""
     try:
         with open(filepath, 'r') as file:
-            sql_file = file.read().split(';')
+            sql_script = file.read()
+
+        statements = [stmt.strip() for stmt in sql_script.split(";") if stmt.strip()]
 
         with engine.connect() as connection:
-
-            for sql_command in sql_file:
-                sql_command = sql_command.strip()
-                if sql_command:
-                    connection.execute(text(sql_command))
-
-            connection.commit()
-
-        logging.info("SQL script executed successfully")
+            transaction = connection.begin()
+            try:
+                for statement in statements:
+                    connection.execute(text(statement))
+                    logging.info(f"SUCCESS - executed SQL line: {statement}")
+                transaction.commit()
+                logging.info("SUCCESS - SQL script executed in order")
+            except Exception as error:
+                transaction.rollback()
+                logging.error(f"SQL execution error: {error}")
+                raise
     except Exception as error:
-        logging.error(f"Error executing SQL script {filepath}: {error}")
+        logging.error(f"ERROR - reading SQL file: {error}")
         raise
 
 def initialize_database():
@@ -120,12 +124,12 @@ def initialize_database():
             )
             existing_tables = [row[0] for row in result.fetchall()]
             if existing_tables:
-                logging.info(f"Tables already exist: {existing_tables}, skipping creation")
+                logging.info(f"EXISTANCE - Tables already exist: {existing_tables}, skipping creation")
             else:
                 execute_sql_script(setup_database_tables_path)
-                logging.info("Tables created successfully")
+                logging.info("SUCCESS - Tables created")
     except Exception as error:
-        logging.error(f"Error creating tables: {error}")
+        logging.error(f"ERROR - creating tables: {error}")
         raise
 
     try:
@@ -136,12 +140,12 @@ def initialize_database():
             )
             existing_indexes = [row[0] for row in result.fetchall()]
             if existing_indexes:
-                logging.info(f"Indexes already exist: {existing_indexes}, skipping creation")
+                logging.info(f"EXISTANCE - Indexes already exist: {existing_indexes}, skipping creation")
             else:
                 execute_sql_script(setup_indexes_path)
-                logging.info("Indexes created successfully")
+                logging.info("SUCCESS - Indexes created")
     except Exception as error:
-        logging.error(f"Error creating indexes: {error}")
+        logging.error(f"ERROR - creating indexes: {error}")
 
     try:
         # Check if any of the views already exist
@@ -151,12 +155,12 @@ def initialize_database():
             )
             existing_views = [row[0] for row in result.fetchall()]
             if existing_views:
-                logging.info(f"Views already exist: {existing_views}, skipping creation")
+                logging.info(f"EXISTANCE - Views already exist: {existing_views}, skipping creation")
             else:
                 execute_sql_script(setup_views_path)
-                logging.info("Views created successfully")
+                logging.info("SUCCESS - Views created")
     except Exception as error:
-        logging.error(f"Error creating or checking views: {error}")
+        logging.error(f"ERROR - creating or checking views: {error}")
 
     try:
         # Check if any of the triggers already exist
@@ -166,18 +170,18 @@ def initialize_database():
             )
             existing_triggers = [row[0] for row in result.fetchall()]
             if existing_triggers:
-                logging.info(f"Triggers already exist: {existing_triggers}, skipping creation")
+                logging.info(f"EXISTANCE - Triggers already exist: {existing_triggers}, skipping creation")
             else:
                 execute_sql_script(setup_triggers_path)
-                logging.info("Triggers created successfully")
+                logging.info("SUCCESS - Triggers created")
     except Exception as error:
-        logging.error(f"Error creating triggers: {error}")
+        logging.error(f"ERROR - creating triggers: {error}")
 
     try:
         execute_sql_script_ordered(setup_database_populate_path)
-        logging.info("Tables populated successfully")
+        logging.info("SUCCESS - Tables populated")
     except Exception as error:
-        logging.error(f"Error populating tables: {error}")
+        logging.error(f"ERROR - populating tables: {error}")
 
 def get_db():
     """

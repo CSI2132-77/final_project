@@ -3,11 +3,11 @@ CREATE OR REPLACE FUNCTION update_hotel_count()
 RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        UPDATE Hotel_Chain 
+        UPDATE Hotel_Chain
         SET hotel_count = (SELECT COUNT(*) FROM Hotel WHERE chain_id = NEW.chain_id)
         WHERE chain_id = NEW.chain_id;
     ELSIF TG_OP = 'DELETE' THEN
-        UPDATE Hotel_Chain 
+        UPDATE Hotel_Chain
         SET hotel_count = (SELECT COUNT(*) FROM Hotel WHERE chain_id = OLD.chain_id)
         WHERE chain_id = OLD.chain_id;
     ELSIF TG_OP = 'UPDATE' AND NEW.chain_id != OLD.chain_id THEN
@@ -28,11 +28,11 @@ CREATE OR REPLACE FUNCTION update_room_count()
 RETURNS TRIGGER AS $$
 BEGIN
     IF TG_OP = 'INSERT' THEN
-        UPDATE Hotel 
+        UPDATE Hotel
         SET room_count = (SELECT COUNT(*) FROM Room WHERE hotel_id = NEW.hotel_id)
         WHERE hotel_id = NEW.hotel_id;
     ELSIF TG_OP = 'DELETE' THEN
-        UPDATE Hotel 
+        UPDATE Hotel
         SET room_count = (SELECT COUNT(*) FROM Room WHERE hotel_id = OLD.hotel_id)
         WHERE hotel_id = OLD.hotel_id;
     ELSIF TG_OP = 'UPDATE' AND NEW.hotel_id != OLD.hotel_id THEN
@@ -53,8 +53,8 @@ CREATE OR REPLACE FUNCTION check_manager_count()
 RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.role = 'manager' AND (
-        SELECT COUNT(*) 
-        FROM Employee 
+        SELECT COUNT(*)
+        FROM Employee
         WHERE hotel_id = NEW.hotel_id AND role = 'manager'
     ) >= 1 THEN
         RAISE EXCEPTION 'Each hotel can have only one manager';

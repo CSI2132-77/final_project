@@ -37,11 +37,9 @@ router = APIRouter()
 # hotel chain, the category of the hotel,
 # the total number of rooms in the hotel,
 # the price of the rooms.
-#* curl -X GET "http://localhost:8000/room/available?chain_id=1&hotel_id=1&start_date=2023-10-01&end_date=2023-10-05&capacity=suite&address=100%20Park%20Avenue%2C%20New%20York%2C%20NY&category=5&total_rooms=6&price=600.00"
-#* curl -X GET "http://localhost:8000/room/available?chain_id=1&hotel_id=1&start_date=2023-10-01&end_date=2023-10-05&address=100%20Park%20Avenue%2C%20New%20York%2C%20NY&category=5&total_rooms=6&price=600.00"
 #* curl -X GET "http://localhost:8000/room/available?chain_id=1"
-#* curl -X GET "http://localhost:8000/room/available?hotel_id=99"
-#* curl -X GET "http://localhost:8000/room/available?chain_id=1&hotel_id=1&start_date=2025-04-02&end_date=2025-04-05&capacity=suite&address=100%20Park%20Avenue%2C%20New%20York%2C%20NY&category=5&total_rooms=6&price=600.00"
+#* curl -X GET "http://localhost:8000/room/available?chain_id=1&hotel_id=1&start_date=2025-04-01&end_date=2025-04-05&capacity=suite&address=100%20Park%20Avenue%2C%20New%20York%2C%20NY&category=5&price=600.00"
+#* curl -X GET "http://localhost:8000/room/available?chain_id=1&hotel_id=1&start_date=2025-04-01&end_date=2025-04-05&capacity=suite&address=100%20Park%20Avenue%2C%20New%20York%2C%20NY&category=5&price=600.00&total_rooms=6"
 @router.get("/room/available", tags=["rooms"])
 async def get_available_rooms(
     chain_id: int = None,
@@ -127,14 +125,16 @@ async def get_available_rooms(
             rooms_by_category = db.query(Room).join(Hotel).filter(Hotel.category == category).all()
             if not rooms_by_category:
                 raise HTTPException(status_code=404, detail=f"No rooms found for the specified category: {category}")
+
         if total_rooms:
             # Filter rooms by total rooms in hotel
-            total_rooms_query = (db.query(Hotel.hotel_id, func.count(Room.room_id).label("total_rooms"))
+            total_rooms_query = (db.query(Hotel.hotel_id, func.count(Room.room_id).label("room_count"))
                 .outerjoin(Room, Hotel.hotel_id == Room.hotel_id)
                 .group_by(Hotel.hotel_id)
                 .having(func.count(Room.room_id) >= total_rooms).all())
+            rooms_by_total_rooms = []
             for hotel in total_rooms_query:
-                rooms_by_total_rooms = db.query(Room).filter(Room.hotel_id == hotel.hotel_id).all()
+                rooms_by_total_rooms.extend(db.query(Room).filter(Room.hotel_id == hotel.hotel_id).all())
             if not rooms_by_total_rooms:
                 raise HTTPException(status_code=404, detail=f"No rooms found for the specified total rooms: {total_rooms}")
         if price:
