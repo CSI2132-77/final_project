@@ -10,9 +10,8 @@ class HotelChain(Base):
     chain_id               = Column(Integer, primary_key=True, autoincrement=True)
     name                   = Column(String(100), nullable=False)
     central_office_address = Column(Text, nullable=False)
-
-    # contacts = relationship("ChainContact", back_populates="hotel_chain", cascade="all, delete-orphan")
-    # hotels = relationship("Hotel", back_populates="hotel_chain", cascade="all, delete-orphan")
+    contacts = relationship("ChainContact", back_populates="hotel_chain", cascade="all, delete-orphan")
+    hotels   = relationship("Hotel", back_populates="hotel_chain", cascade="all, delete-orphan")
 
 class ChainContact(Base):
     __tablename__  = 'chain_contact'
@@ -22,7 +21,7 @@ class ChainContact(Base):
     contact_type   = Column(String(10), nullable=False)
     value = Column(Text, nullable=False)
     __table_args__ = (PrimaryKeyConstraint('chain_id', 'contact_type', 'value'),)
-    # hotel_chain = relationship("HotelChain", back_populates="contacts")
+    hotel_chain = relationship("HotelChain", back_populates="contacts")
 
 class Hotel(Base):
     __tablename__ = 'hotel'
@@ -32,8 +31,11 @@ class Hotel(Base):
                         nullable=False)
     address       = Column(Text, nullable=False)
     category      = Column(Integer, nullable=False)
-    # hotel_chain = relationship("HotelChain", back_populates="hotels")
-    # contacts = relationship("HotelContact", back_populates="hotel", cascade="all, delete-orphan")
+    # Define the relationship to HotelChain for cascade delete
+    hotel_chain   = relationship("HotelChain", back_populates="hotels")
+    contacts      = relationship("HotelContact", back_populates="hotel", cascade="all, delete-orphan")
+    rooms         = relationship("Room", back_populates="hotel", cascade="all, delete-orphan")
+    employees     = relationship("Employee", back_populates="hotel", cascade="all, delete-orphan")
 
 class HotelContact(Base):
     __tablename__  = 'hotel_contact'
@@ -43,8 +45,8 @@ class HotelContact(Base):
     contact_type   = Column(String(10))
     value          = Column(Text, nullable=False)
     __table_args__ = (PrimaryKeyConstraint('hotel_id', 'contact_type', 'value'),)
-
-    # hotel = relationship("Hotel", back_populates="contacts")
+    # Define the relationship to Hotel for cascade delete
+    hotel = relationship("Hotel", back_populates="contacts")
 
 class Room(Base):
     __tablename__  = 'room'
@@ -68,6 +70,10 @@ class Room(Base):
             "view_type IN ('sea', 'mountain', 'none')",
             name="check_view_type_valid"),
     )
+    # Define the relationship to Hotel for cascade delete
+    hotel = relationship("Hotel", back_populates="rooms")
+    amenities = relationship("RoomAmenity", back_populates="room", cascade="all, delete-orphan")
+    problems  = relationship("RoomProblem", back_populates="room", cascade="all, delete-orphan")
 
 class RoomAmenity(Base):
     __tablename__  = 'room_amenity'
@@ -76,6 +82,8 @@ class RoomAmenity(Base):
                         nullable=False)
     amenity        = Column(Text, nullable=False)
     __table_args__ = (PrimaryKeyConstraint('room_id', 'amenity'),)
+    # Define the relationship to Hotel for cascade delete
+    room = relationship("Room", back_populates="amenities")
 
 class RoomProblem(Base):
     __tablename__ = 'room_problem'
@@ -87,6 +95,8 @@ class RoomProblem(Base):
     __table_args__      = (
         PrimaryKeyConstraint('room_id', 'problem_description', 'reported_date'),
     )
+    # Define the relationship to Hotel for cascade delete
+    room = relationship("Room", back_populates="problems")
 
 class Booking(Base):
     __tablename__   = 'booking'
@@ -113,7 +123,8 @@ class Renting(Base):
     __tablename__  = 'renting'
     renting_id     = Column(Integer, primary_key=True, autoincrement=True)
     booking_id     = Column(Integer,
-                         ForeignKey("booking.booking_id", ondelete="SET NULL"))
+                         ForeignKey("booking.booking_id", ondelete="SET NULL"),
+                         nullable=True)
     customer_id    = Column(Integer,
                              ForeignKey("customer.customer_id", ondelete="SET NULL"),
                              nullable=False)
@@ -146,6 +157,8 @@ class Employee(Base):
             "role IN ('manager', 'receptionist', 'housekeeping')",
             name="check_role_valid"),
     )
+    # Define the relationship to Hotel for cascade delete
+    hotel = relationship("Hotel", back_populates="employees")
 
 class Customer(Base):
     __tablename__     = 'customer'
@@ -168,3 +181,19 @@ class AvailableRoomsPerArea(Base):
     min_price       = Column(Numeric(10,2))
     max_price       = Column(Numeric(10,2))
     avg_price       = Column(Numeric(10,2))
+
+class HotelRoomCapacity(Base):
+    __tablename__ = "hotel_room_capacity"
+    hotel_id      = Column(Integer, primary_key=True)  # Assuming hotel_id is unique in the view
+    address       = Column(String)
+    category      = Column(String)
+    total_rooms   = Column(Integer)
+    single_rooms  = Column(Integer)
+    double_rooms  = Column(Integer)
+    suite_rooms   = Column(Integer)
+
+class RevenueByChain(Base):
+    __tablename__ = "revenue_by_chain"
+    chain_name    = Column(String, primary_key=True)  # Not a real PK but necessary for ORM
+    hotel_count   = Column(Integer)
+    total_revenue = Column(Numeric(10, 2))

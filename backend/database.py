@@ -13,6 +13,9 @@ logging.basicConfig(
 
 # Paths to SQL scripts
 setup_database_tables_path   = "../sql/DatabaseImplementationCode.sql"
+setup_indexes_path           = "../sql/Indexes.sql"
+setup_views_path            = "../sql/Views.sql"
+setup_triggers_path          = "../sql/Triggers_ModificationCode.sql"
 setup_database_populate_path = "../sql/DatabasePopulation.sql"
 
 # Create an engine that manages connections to the database
@@ -28,18 +31,15 @@ def execute_sql_script(filepath):
     """Execute an SQL script from a file."""
     try:
         with open(filepath, 'r') as file:
-            sql_commands = file.read().split(';')
+            sql_file = file.read()
 
         with engine.connect() as connection:
-            # Execute each command in the script
-            for command in sql_commands:
-                command = command.strip()
-                if command:
-                    connection.execute(text(command))
+            connection.execute(text(sql_file))
             connection.commit()
+
         logging.info("SQL script executed successfully")
     except Exception as error:
-        logging.error(f"Error executing SQL script: {error}")
+        logging.error(f"Error executing SQL script {filepath}: {error}")
         raise
 
 def execute_query(query, params=None):
@@ -55,10 +55,36 @@ def execute_query(query, params=None):
 
 def create_database():
     """Create the database if it doesn't exist."""
-    execute_sql_script(setup_database_tables_path)
-    logging.info("Tables created successfully")
-    execute_sql_script(setup_database_populate_path)
-    logging.info("Tables populated successfully")
+    try:
+        execute_sql_script(setup_database_tables_path)
+        logging.info("Tables created successfully")
+    except Exception as error:
+        logging.error(f"Error creating tables: {error}")
+        raise
+
+    try:
+        execute_sql_script(setup_indexes_path)
+        logging.info("Indexes created successfully")
+    except Exception as error:
+        logging.error(f"Error creating indexes: {error}")
+
+    try:
+        execute_sql_script(setup_views_path)
+        logging.info("Views created successfully")
+    except Exception as error:
+        logging.error(f"Error creating views: {error}")
+
+    try:
+        execute_sql_script(setup_triggers_path)
+        logging.info("Triggers created successfully")
+    except Exception as error:
+        logging.error(f"Error creating triggers: {error}")
+
+    try:
+        execute_sql_script(setup_database_populate_path)
+        logging.info("Tables populated successfully")
+    except Exception as error:
+        logging.error(f"Error populating tables: {error}")
 
 def get_db():
     """
