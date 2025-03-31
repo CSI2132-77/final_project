@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS Booking (
     check_in_date DATE NOT NULL,
     check_out_date DATE NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'canceled', 'completed')),
-    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id) ON DELETE SET NULL,
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id) ON DELETE CASCADE,
     FOREIGN KEY (room_id) REFERENCES Room(room_id) ON DELETE CASCADE,
     CHECK (check_out_date > check_in_date)
 );
@@ -102,22 +102,40 @@ CREATE TABLE IF NOT EXISTS Booking (
 -- Renting
 CREATE TABLE IF NOT EXISTS Renting (
     renting_id SERIAL PRIMARY KEY,
-    booking_id INTEGER,
+    booking_id INTEGER NOT NULL,
     customer_id INTEGER NOT NULL,
     room_id INTEGER NOT NULL,
     employee_id INTEGER NOT NULL,
     start_date DATE NOT NULL,
     end_date DATE NOT NULL,
-    FOREIGN KEY (booking_id) REFERENCES Booking(booking_id) ON DELETE SET NULL,
-    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id) ON DELETE SET NULL,
+    FOREIGN KEY (booking_id) REFERENCES Booking(booking_id) ON DELETE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES Customer(customer_id) ON DELETE CASCADE,
     FOREIGN KEY (room_id) REFERENCES Room(room_id) ON DELETE CASCADE,
-    FOREIGN KEY (employee_id) REFERENCES Employee(employee_id) ON DELETE RESTRICT,
+    FOREIGN KEY (employee_id) REFERENCES Employee(employee_id) ON DELETE CASCADE,
     CHECK (end_date >= start_date)
 );
 
 -- Booking Archive (for completed bookings)
 CREATE TABLE IF NOT EXISTS Booking_Archive (
-    LIKE Booking INCLUDING ALL
+    booking_id SERIAL PRIMARY KEY,
+    customer_id INTEGER,
+    room_id INTEGER,
+    check_in_date DATE NOT NULL,
+    check_out_date DATE NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'completed' CHECK (status IN ('active', 'canceled', 'completed')),
+    CHECK (check_out_date > check_in_date)
+);
+
+-- Renting Archive (for completed rentals)
+CREATE TABLE IF NOT EXISTS Renting_Archive (
+    renting_id SERIAL PRIMARY KEY,
+    booking_id INTEGER,
+    customer_id INTEGER,
+    room_id INTEGER,
+    employee_id INTEGER,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    CHECK (end_date >= start_date)
 );
 
 -- Prevent overlapping bookings

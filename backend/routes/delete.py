@@ -19,7 +19,7 @@ logging.basicConfig(
 router = APIRouter()
 
 #* DELETE request to remove a customer
-#* curl -X DELETE "http://localhost:8000/customer/delete" -H "Content-Type: application/json" -d '{"customer_id": 30}'
+#* curl -X DELETE "http://localhost:8000/customer/delete" -H "Content-Type: application/json" -d '{"customer_id": 12}'
 @router.delete("/customer/delete", tags=["delete_customer"], response_model=CustomerResponse)
 async def delete_customer(
     customer: CustomerDelete,
@@ -41,7 +41,7 @@ async def delete_customer(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* DELETE request to remove a employee
-#* curl -X DELETE "http://localhost:8000/employee/delete" -H "Content-Type: application/json" -d '{"employee_id": 123}'
+#* curl -X DELETE "http://localhost:8000/employee/delete" -H "Content-Type: application/json" -d '{"employee_id": 4}'
 @router.delete("/employee/delete", tags=["delete_employee"], response_model=EmployeeResponse)
 async def delete_employee(
     employee: EmployeeDelete,
@@ -63,7 +63,7 @@ async def delete_employee(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* DELETE request to remove a hotel
-#* curl -X DELETE "http://localhost:8000/hotel/delete" -H "Content-Type: application/json" -d '{"hotel_id": 41}'
+#* curl -X DELETE "http://localhost:8000/hotel/delete" -H "Content-Type: application/json" -d '{"hotel_id": 1}'
 @router.delete("/hotel/delete", tags=["delete_hotel"], response_model=HotelResponse)
 async def delete_hotel(
     hotel: HotelDelete,
@@ -85,7 +85,7 @@ async def delete_hotel(
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* DELETE request to remove a room
-#* curl -X DELETE "http://localhost:8000/room/delete" -H "Content-Type: application/json" -d '{"room_id": 224}'
+#* curl -X DELETE "http://localhost:8000/room/delete" -H "Content-Type: application/json" -d '{"room_id": 12}'
 @router.delete("/room/delete", tags=["delete_room"], response_model=RoomResponse)
 async def delete_room(
     room: RoomDelete,

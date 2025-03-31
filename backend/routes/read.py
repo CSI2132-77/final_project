@@ -32,8 +32,8 @@ async def get_hotel_chains(db: Session = Depends(database.get_db)) -> list[dict[
                 "name": chain.name,
                 "central_office_address": chain.central_office_address,
                 "hotel_count": chain.hotel_count,
-            }
-        for chain in hotel_chains ]
+            } for chain in hotel_chains
+        ]
         return hotel_chains
     except Exception as e:
         logging.error(f"Error fetching hotel chains: {e}")
@@ -52,8 +52,7 @@ async def get_hotel_chain_contacts(db: Session = Depends(database.get_db)) -> li
                 "chain_id": contact.chain_id,
                 "contact_type": contact.contact_type,
                 "value": contact.value
-            }
-            for contact in hotel_chain_contacts
+            } for contact in hotel_chain_contacts
         ]
         return hotel_chain_contacts
     except Exception as e:
@@ -75,8 +74,7 @@ async def get_hotels(db: Session = Depends(database.get_db)) -> list[dict[str, A
                 "address": hotel.address,
                 "room_count": hotel.room_count,
                 "category": hotel.category
-            }
-            for hotel in hotels
+            } for hotel in hotels
         ]
         return hotels
     except Exception as e:
@@ -96,8 +94,7 @@ async def get_hotel_contacts(db: Session = Depends(database.get_db)) -> list[dic
                 "hotel_id": contact.hotel_id,
                 "contact_type": contact.contact_type,
                 "value": contact.value
-            }
-            for contact in hotel_contacts
+            } for contact in hotel_contacts
         ]
         return hotel_contacts
     except Exception as e:
@@ -120,8 +117,7 @@ async def get_rooms(db: Session = Depends(database.get_db)) -> list[dict[str, An
                 "capacity": room.capacity,
                 "view_type": room.view_type,
                 "is_extendable": room.is_extendable
-            }
-            for room in rooms
+            } for room in rooms
         ]
         return rooms
     except Exception as e:
@@ -140,8 +136,7 @@ async def get_room_amenities(db: Session = Depends(database.get_db)) -> list[dic
             {
                 "room_id": amenity.room_id,
                 "amenity": amenity.amenity
-            }
-            for amenity in room_amenities
+            } for amenity in room_amenities
         ]
         return room_amenities
     except Exception as e:
@@ -161,8 +156,7 @@ async def get_room_problems(db: Session = Depends(database.get_db)) -> list[dict
                 "room_id": problem.room_id,
                 "problem_description": problem.problem_description,
                 "reported_date": problem.reported_date
-            }
-            for problem in room_problems
+            } for problem in room_problems
         ]
         return room_problems
     except Exception as e:
@@ -170,23 +164,23 @@ async def get_room_problems(db: Session = Depends(database.get_db)) -> list[dict
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 #* TEST URL: /booking
-# This endpoint fetches all bookings from the database.
+#* curl -X GET "http://localhost:8000/booking" -H "Content-Type: application/json"
 @router.get("/booking", tags=["booking"])
 async def get_bookings(db: Session = Depends(database.get_db)) -> list[dict[str, Any]]:
     try:
         bookings = db.query(Booking).all()
         logging.info(f"Fetched {len(bookings)} bookings")
         # Convert SQLAlchemy objects to dictionaries for JSON response
-        bookings = {
-            booking.booking_id: {
+        bookings = [
+            {
+                "booking_id": booking.booking_id,
                 "customer_id": booking.customer_id,
                 "room_id": booking.room_id,
                 "check_in_date": booking.check_in_date,
                 "check_out_date": booking.check_out_date,
                 "status": booking.status
-            }
-            for booking in bookings
-        }
+            } for booking in bookings
+        ]
         return bookings
     except Exception as e:
         logging.error(f"Error fetching bookings: {e}")
@@ -209,8 +203,7 @@ async def get_rentings(db: Session = Depends(database.get_db)) -> list[dict[str,
                 "employee_id": renting.employee_id,
                 "start_date": renting.start_date,
                 "end_date": renting.end_date
-            }
-            for renting in rentings
+            } for renting in rentings
         ]
         return rentings
     except Exception as e:
@@ -233,8 +226,7 @@ async def get_employees(db: Session = Depends(database.get_db)) -> list[dict[str
                 "address": employee.address,
                 "ssn_sin": employee.ssn_sin,
                 "role": employee.role
-            }
-            for employee in employees
+            } for employee in employees
         ]
         return employees
     except Exception as e:
@@ -257,8 +249,7 @@ async def get_customers(db: Session = Depends(database.get_db)) -> list[dict[str
                 "id_type": customer.id_type,
                 "id_number": customer.id_number,
                 "registration_date": customer.registration_date
-            }
-            for customer in customers
+            } for customer in customers
         ]
         return customers
     except Exception as e:
