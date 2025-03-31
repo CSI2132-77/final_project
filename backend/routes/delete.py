@@ -6,7 +6,8 @@ import database
 from models import (HotelChain, ChainContact, Hotel, HotelContact,
                     Room, RoomAmenity, RoomProblem, Booking, Renting, Employee, Customer)
 from schema import (CustomerDelete, CustomerResponse, EmployeeDelete, EmployeeResponse,
-                    HotelDelete, HotelResponse, RoomDelete, RoomResponse)
+                    HotelDelete, HotelResponse, RoomDelete, RoomResponse, HotelChainDelete,
+                    HotelChainResponse)
 
 # Set up logging
 logging.basicConfig(
@@ -83,7 +84,6 @@ async def delete_hotel(
         logging.error(f"Error deleting hotel: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-
 #* DELETE request to remove a room
 #* curl -X DELETE "http://localhost:8000/room/delete" -H "Content-Type: application/json" -d '{"room_id": 224}'
 @router.delete("/room/delete", tags=["delete_room"], response_model=RoomResponse)
@@ -104,4 +104,28 @@ async def delete_room(
         return room_to_delete
     except Exception as e:
         logging.error(f"Error deleting room: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+#* NOTE that the cascading delete to remove all related records **does not work**
+# TODO: Since rentings is an archive of all rentings, we need to allow NULL employee_id
+#* DELETE request to remove a hotel chain
+#* curl -X DELETE "http://localhost:8000/hotel_chain/delete" -H "Content-Type: application/json" -d '{"chain_id": 1}'
+@router.delete("/hotel_chain/delete", tags=["delete_hotel_chain"], response_model=HotelChainResponse)
+async def delete_hotel_chain(
+    chain: HotelChainDelete,
+    db: Session = Depends(database.get_db)
+    ) -> HotelChainResponse:
+    try:
+        # Fetch the hotel chain to be deleted
+        chain_to_delete = db.query(HotelChain).filter(HotelChain.chain_id == chain.chain_id).first()
+        if not chain_to_delete:
+            raise HTTPException(status_code=404, detail=f"Hotel Chain not found with chain_id: {chain.chain_id}")
+
+        # Delete the hotel chain from the database
+        db.delete(chain_to_delete)
+        db.commit()
+        logging.info(f"Deleted hotel chain with chain_id: {chain_to_delete.chain_id}")
+        return chain_to_delete
+    except Exception as e:
+        logging.error(f"Error deleting hotel chain: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")

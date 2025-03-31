@@ -180,24 +180,38 @@ class BookingUpdate(BookingBase):
     customer_id: int = None
     room_id: int = None
 
+class BookingToRenting(BookingBase):
+    booking_id: int
+    employee_id: int
+    # Optional fields for updating
+    check_in_date: Optional[str] = None
+    check_out_date: Optional[str] = None
+    status: Optional[str] = None
+    customer_id: Optional[int] = None
+    room_id: Optional[int] = None
+
 # Response model for returning data
 class BookingResponse(BookingBase):
     booking_id: int
     customer_id: int
     room_id: int
+    check_in_date: date
+    check_out_date: date
+    status: str
 
 
 # Base model (shared attributes)
 class RentingBase(BaseModel):
-    start_date: str
-    end_date: str
+    start_date: date
+    end_date: date
 
     class Config:
         orm_mode = True
 
 # Request model for creating a renting
 class RentingCreate(RentingBase):
-    booking_id: int
+    # Can be Null in case of renting without booking
+    booking_id: Optional[int] = None # Can be Null in database
     customer_id: int
     room_id: int
     employee_id: int
@@ -212,10 +226,12 @@ class RentingUpdate(RentingBase):
     start_date: str = None
     end_date: str = None
 
+
 # Response model for returning data
 class RentingResponse(RentingBase):
     renting_id: int
-    booking_id: int
+    # Can be Null in case of renting without booking
+    booking_id: Optional[int] = None # Can be Null in database
     customer_id: int
     room_id: int
     employee_id: int
@@ -288,6 +304,12 @@ class AvailableRoomsPerAreaResponse(BaseModel):
     class Config:
         from_attributes = True  # This allows SQLAlchemy model conversion
 
+class HotelChainDelete(BaseModel):
+    chain_id: int
+    # No extra fields needed
+    class Config:
+        orm_mode = True
+
 # Request model for deleting a customer
 class CustomerDelete(BaseModel):
     customer_id: int
@@ -312,6 +334,18 @@ class HotelDelete(BaseModel):
 # Request model for deleting a room
 class RoomDelete(BaseModel):
     room_id: int
+    # No extra fields needed
+    class Config:
+        orm_mode = True
+
+class RentingDelete(BaseModel):
+    renting_id: int
+    # No extra fields needed
+    class Config:
+        orm_mode = True
+
+class BookingDelete(BaseModel):
+    booking_id: int
     # No extra fields needed
     class Config:
         orm_mode = True
