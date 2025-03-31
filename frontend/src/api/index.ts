@@ -51,7 +51,7 @@ export const createRenting = async (data: {
 
 // Booking
 
-export const getBookings = async (): Promise<Record<number, Booking>> => {
+export const getBookings = async (): Promise<Booking[]> => {
   const response = await axios.get(`${API_BASE_URL}/booking`);
   return response.data;
 };

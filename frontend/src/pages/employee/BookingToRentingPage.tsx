@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { checkInOnline, getBookings, getEmployees } from '../../api/index';
+import { checkInOnline, getBookings, getEmployees, getRentings } from '../../api/index';
 import './BookingToRentingPage.css';
 
 interface Booking {
@@ -17,11 +17,16 @@ interface Employee {
   role: string;
 }
 
+interface Renting {
+  booking_id: number | null;
+}
+
 const BookingToRentingComponent: React.FC = () => {
   const [bookingId, setBookingId] = useState<number>(0);
   const [employeeId, setEmployeeId] = useState<number>(0);
-  const [bookings, setBookings] = useState<Record<number, Booking>>({});
+  const [bookings, setBookings] = useState<Booking[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
+  const [rentings, setRentings] = useState<Renting[]>([]);
   const [message, setMessage] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,24 +36,15 @@ const BookingToRentingComponent: React.FC = () => {
       setIsLoading(true);
       setError('');
       try {
-        const [bookingsRes, employeesRes] = await Promise.all([
+        const [bookingsRes, employeesRes, rentingsRes] = await Promise.all([
           getBookings(),
-          getEmployees()
+          getEmployees(),
+          getRentings()
         ]);
         
-        // Ensure bookings is an object and employees is an array
-        if (bookingsRes && typeof bookingsRes === 'object' && !Array.isArray(bookingsRes)) {
-          setBookings(bookingsRes);
-        } else {
-          throw new Error('Invalid bookings data format');
-        }
-
-        if (Array.isArray(employeesRes)) {
-          setEmployees(employeesRes);
-        } else {
-          throw new Error('Invalid employees data format');
-        }
-
+        setBookings(bookingsRes);
+        setEmployees(employeesRes.data);
+        setRentings(rentingsRes);
       } catch (err: any) {
         console.error('API Error:', err);
         setError(err.response?.data?.message || 
@@ -73,8 +69,8 @@ const BookingToRentingComponent: React.FC = () => {
         throw new Error('Please select both a booking and an employee');
       }
 
-      // Convert dictionary to array and filter active bookings
-      const activeBookings = Object.values(bookings).filter(
+      // Filter active bookings from the array
+      const activeBookings = bookings.filter(
         booking => booking.status === 'active'
       );
 
@@ -94,10 +90,12 @@ const BookingToRentingComponent: React.FC = () => {
       setEmployeeId(0);
 
       // Refresh bookings list
-      const updatedBookings = await getBookings();
-      if (updatedBookings && typeof updatedBookings === 'object') {
-        setBookings(updatedBookings);
-      }
+      const [updatedBookings, updatedRentings] = await Promise.all([
+        getBookings(),
+        getRentings()
+      ]);
+      setBookings(updatedBookings);
+      setRentings(updatedRentings);
 
     } catch (err: any) {
       console.error('Conversion Error:', err);
@@ -110,9 +108,15 @@ const BookingToRentingComponent: React.FC = () => {
     }
   };
 
-  // Convert bookings dictionary to array for rendering
-  const bookingList = Object.values(bookings).filter(
-    booking => booking.status === 'active'
+  // Get booking IDs that already have rentings
+  const bookedRentingIds = rentings
+    .map(renting => renting.booking_id)
+    .filter(id => id !== null) as number[];
+
+  // Filter active bookings that don't have rentings
+  const availableBookings = bookings.filter(
+    booking => booking.status === 'active' && 
+              !bookedRentingIds.includes(booking.booking_id)
   );
 
   return (
@@ -132,11 +136,11 @@ const BookingToRentingComponent: React.FC = () => {
             onChange={(e) => setBookingId(Number(e.target.value))}
             className="w-full p-2 border rounded"
             required
-            disabled={isLoading || bookingList.length === 0}
+            disabled={isLoading || availableBookings.length === 0}
           >
             <option value="">Select Booking</option>
-            {bookingList.length > 0 ? (
-              bookingList.map((booking) => (
+            {availableBookings.length > 0 ? (
+              availableBookings.map((booking) => (
                 <option key={booking.booking_id} value={booking.booking_id}>
                   Booking #{booking.booking_id} - Room {booking.room_id} - 
                   {new Date(booking.check_in_date).toLocaleDateString()} to 
@@ -174,7 +178,7 @@ const BookingToRentingComponent: React.FC = () => {
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-          disabled={isLoading || bookingList.length === 0 || employees.length === 0}
+          disabled={isLoading || availableBookings.length === 0 || employees.length === 0}
         >
           {isLoading ? 'Processing...' : 'Convert to Renting'}
         </button>
