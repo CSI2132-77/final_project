@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { checkInPerson, getCustomers, getRooms, getEmployees, getRentings } from '../../api/index';
 import './DirectRentingPage.css';
-import { AxiosResponse } from 'axios';
 
 interface DirectRentingFormData {
   customer_id: number;

@@ -18,7 +18,13 @@ interface Employee {
 }
 
 interface Renting {
+  renting_id: number;
   booking_id: number | null;
+  customer_id: number;
+  room_id: number;
+  employee_id: number;
+  start_date: string;
+  end_date: string;
 }
 
 const BookingToRentingComponent: React.FC = () => {
@@ -69,15 +75,6 @@ const BookingToRentingComponent: React.FC = () => {
         throw new Error('Please select both a booking and an employee');
       }
 
-      // Filter active bookings from the array
-      const activeBookings = bookings.filter(
-        booking => booking.status === 'active'
-      );
-
-      if (!activeBookings.some(b => b.booking_id === bookingId)) {
-        throw new Error('Selected booking is not active or does not exist');
-      }
-
       const response = await checkInOnline({
         booking_id: bookingId,
         employee_id: employeeId
@@ -89,7 +86,7 @@ const BookingToRentingComponent: React.FC = () => {
       setBookingId(0);
       setEmployeeId(0);
 
-      // Refresh bookings list
+      // Refresh data
       const [updatedBookings, updatedRentings] = await Promise.all([
         getBookings(),
         getRentings()
@@ -108,16 +105,20 @@ const BookingToRentingComponent: React.FC = () => {
     }
   };
 
-  // Get booking IDs that already have rentings
-  const bookedRentingIds = rentings
-    .map(renting => renting.booking_id)
-    .filter(id => id !== null) as number[];
+  // Get bookings that can be converted to rentings
+  const getAvailableBookings = () => {
+    const bookedRentingIds = rentings
+      .filter(renting => renting.booking_id !== null)
+      .map(renting => renting.booking_id) as number[];
 
-  // Filter active bookings that don't have rentings
-  const availableBookings = bookings.filter(
-    booking => booking.status === 'active' && 
-              !bookedRentingIds.includes(booking.booking_id)
-  );
+    return bookings.filter(booking => {
+      const isActive = booking.status === 'active';
+      const hasNoRenting = !bookedRentingIds.includes(booking.booking_id);
+      return isActive && hasNoRenting;
+    });
+  };
+
+  const availableBookings = getAvailableBookings();
 
   return (
     <div className="p-4 border rounded shadow">
@@ -134,9 +135,11 @@ const BookingToRentingComponent: React.FC = () => {
           <select
             value={bookingId}
             onChange={(e) => setBookingId(Number(e.target.value))}
-            className="w-full p-2 border rounded"
+            className={`w-full p-2 border rounded ${
+              availableBookings.length === 0 ? 'bg-gray-100' : ''
+            }`}
             required
-            disabled={isLoading || availableBookings.length === 0}
+            disabled={isLoading}
           >
             <option value="">Select Booking</option>
             {availableBookings.length > 0 ? (
@@ -148,9 +151,16 @@ const BookingToRentingComponent: React.FC = () => {
                 </option>
               ))
             ) : (
-              <option value="" disabled>No active bookings available</option>
+              <option value="" disabled>
+                {bookings.length === 0 ? 'No bookings available' : 'No active bookings available for conversion'}
+              </option>
             )}
           </select>
+          {availableBookings.length === 0 && bookings.length > 0 && (
+            <p className="text-sm text-gray-500 mt-1">
+              All active bookings have already been converted to rentings
+            </p>
+          )}
         </div>
 
         <div>
@@ -158,7 +168,9 @@ const BookingToRentingComponent: React.FC = () => {
           <select
             value={employeeId}
             onChange={(e) => setEmployeeId(Number(e.target.value))}
-            className="w-full p-2 border rounded"
+            className={`w-full p-2 border rounded ${
+              employees.length === 0 ? 'bg-gray-100' : ''
+            }`}
             required
             disabled={isLoading || employees.length === 0}
           >

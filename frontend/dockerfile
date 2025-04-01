@@ -1,18 +1,24 @@
-# Use the official Node.js image
-FROM node:22.14.0
+FROM node:20-alpine
 
-# Set the working directory
 WORKDIR /app
 
-# Copy package.json and install dependencies
-COPY package.json package-lock.json ./
-RUN npm install --verbose
+# First install npm v11.2.0 to prevent warnings
+RUN npm install -g npm@11.2.0
 
-# Copy the rest of the frontend code
+# Copy package files first for better caching
+COPY package*.json ./
+
+# Install dependencies with legacy peer deps (helps with compatibility)
+RUN npm install --legacy-peer-deps
+
+# Explicitly install rollup if needed
+RUN npm install rollup @rollup/plugin-node-resolve --save-dev
+
+# Copy the rest of the application
 COPY . .
 
-# Expose frontend port
+# Expose the port
 EXPOSE 3000
 
-# Start the frontend
+# Start the application
 CMD ["npm", "run", "dev"]

@@ -26,9 +26,15 @@ interface Room {
 }
 
 const SearchAndBookPage: React.FC = () => {
+  // Set default dates (today and tomorrow)
+  const today = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
   const [criteria, setCriteria] = useState({
-    checkIn: '',
-    checkOut: '',
+    checkIn: today,
+    checkOut: tomorrowStr,
     capacity: 'single',
     area: '',
     hotelChain: '',
@@ -48,10 +54,22 @@ const SearchAndBookPage: React.FC = () => {
       setMessage({text: 'Please select both check-in and check-out dates', severity: 'error'});
       return false;
     }
-    if (new Date(criteria.checkOut) <= new Date(criteria.checkIn)) {
+    
+    const checkInDate = new Date(criteria.checkIn);
+    const checkOutDate = new Date(criteria.checkOut);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (checkInDate < today) {
+      setMessage({text: 'Check-in date cannot be in the past', severity: 'error'});
+      return false;
+    }
+    
+    if (checkOutDate <= checkInDate) {
       setMessage({text: 'Check-out date must be after check-in date', severity: 'error'});
       return false;
     }
+    
     return true;
   };
 
@@ -64,29 +82,22 @@ const SearchAndBookPage: React.FC = () => {
       const params = {
         start_date: criteria.checkIn,
         end_date: criteria.checkOut,
-        capacity: criteria.capacity,
-        address: criteria.area,
-        chain_id: criteria.hotelChain,
-        category: criteria.category,
+        ...(criteria.capacity && { capacity: criteria.capacity }),
+        ...(criteria.area && { address: criteria.area }),
+        ...(criteria.hotelChain && { chain_id: criteria.hotelChain }),
+        ...(criteria.category && { category: criteria.category }),
         price: criteria.priceRange[1] // Using max price as per your backend
       };
 
-      // Remove undefined parameters
-      const cleanedParams = Object.fromEntries(
-        Object.entries(params).filter(([_, v]) => v !== undefined)
-      );
+      const response = await searchRooms(params);
 
-      const response = await searchRooms(cleanedParams);
-
-      // Handle both array and error responses
       if (Array.isArray(response.data)) {
         setRooms(response.data);
         setMessage({
           text: `Found ${response.data.length} available rooms`,
-          severity: 'success'
+          severity: response.data.length ? 'success' : 'info'
         });
       } else {
-        // Handle error cases
         setMessage({
           text: 'No rooms found matching your criteria',
           severity: 'info'
@@ -146,6 +157,7 @@ const SearchAndBookPage: React.FC = () => {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
+              inputProps={{ min: today }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
@@ -157,6 +169,7 @@ const SearchAndBookPage: React.FC = () => {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
+              inputProps={{ min: tomorrowStr }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
@@ -177,7 +190,7 @@ const SearchAndBookPage: React.FC = () => {
               label="Location"
               placeholder="City or address"
               value={criteria.area}
-              onChange={(e) => setCriteria({ ...criteria, area: e.target.value })}
+              onChange={(e) => setCriteria({ ...criteria, area: e.target.value.trim() })}
               fullWidth
             />
           </Grid>
@@ -186,7 +199,7 @@ const SearchAndBookPage: React.FC = () => {
               label="Hotel Chain ID"
               placeholder="Chain ID"
               value={criteria.hotelChain}
-              onChange={(e) => setCriteria({ ...criteria, hotelChain: e.target.value })}
+              onChange={(e) => setCriteria({ ...criteria, hotelChain: e.target.value.trim() })}
               fullWidth
             />
           </Grid>
@@ -290,11 +303,13 @@ const SearchAndBookPage: React.FC = () => {
           ))}
         </Grid>
       ) : (
-        <Paper sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="body1">
-            No rooms available. Please adjust your search criteria.
-          </Typography>
-        </Paper>
+        !isLoading && (
+          <Paper sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="body1">
+              No rooms available. Please adjust your search criteria.
+            </Typography>
+          </Paper>
+        )
       )}
     </Box>
   );
