@@ -88,26 +88,6 @@ FOR EACH ROW
 WHEN (NEW.role = 'manager')
 EXECUTE FUNCTION ensure_manager_exists();
 
--- Trigger to prevent deleting the only manager of a hotel
-CREATE OR REPLACE FUNCTION prevent_manager_deletion()
-RETURNS TRIGGER AS $$
-BEGIN
-    IF OLD.role = 'manager' AND (
-        SELECT COUNT(*)
-        FROM Employee
-        WHERE hotel_id = OLD.hotel_id AND role = 'manager'
-    ) = 1 THEN
-        RAISE EXCEPTION 'Cannot delete the only manager of a hotel';
-    END IF;
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER trigger_prevent_manager_deletion
-BEFORE DELETE ON Employee
-FOR EACH ROW
-EXECUTE FUNCTION prevent_manager_deletion();
-
 -- Trigger to archive completed bookings automatically
 CREATE OR REPLACE FUNCTION archive_completed_bookings()
 RETURNS TRIGGER AS $$

@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS Booking (
 -- Renting
 CREATE TABLE IF NOT EXISTS Renting (
     renting_id SERIAL PRIMARY KEY,
-    booking_id INTEGER NOT NULL,
+    booking_id INTEGER,
     customer_id INTEGER NOT NULL,
     room_id INTEGER NOT NULL,
     employee_id INTEGER NOT NULL,
