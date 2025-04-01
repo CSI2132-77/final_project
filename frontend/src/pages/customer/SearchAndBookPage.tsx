@@ -70,7 +70,7 @@ const SearchAndBookPage: React.FC = () => {
     area: '',
     hotelChain: '',
     category: '',
-    priceRange: [0, 1000] as [number, number],
+    price: 1000, // Changed to 'price' to match backend API
   });
   const [rooms, setRooms] = useState<Room[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -106,8 +106,8 @@ const SearchAndBookPage: React.FC = () => {
     fetchCustomers();
   }, []);
 
-  const handlePriceRangeChange = (event: Event, newValue: number | number[]) => {
-    setCriteria({ ...criteria, priceRange: newValue as [number, number] });
+  const handlePriceChange = (event: Event, newValue: number | number[]) => {
+    setCriteria({ ...criteria, price: newValue as number });
   };
 
   const validateDates = () => {
@@ -147,7 +147,7 @@ const SearchAndBookPage: React.FC = () => {
         ...(criteria.area && { address: criteria.area }),
         ...(criteria.hotelChain && { chain_id: criteria.hotelChain }),
         ...(criteria.category && { category: criteria.category }),
-        price: criteria.priceRange[1]
+        price: criteria.price // Changed to match backend API
       };
 
       const response = await searchRooms(params);
@@ -364,11 +364,11 @@ const SearchAndBookPage: React.FC = () => {
           </Grid>
           <Grid item xs={12}>
             <Typography gutterBottom>
-              Price Range: {formatPrice(criteria.priceRange[0].toString())} - {formatPrice(criteria.priceRange[1].toString())}
+              Maximum Price: {formatPrice(criteria.price.toString())}
             </Typography>
             <Slider
-              value={criteria.priceRange}
-              onChange={handlePriceRangeChange}
+              value={criteria.price}
+              onChange={handlePriceChange}
               valueLabelDisplay="auto"
               min={0}
               max={1000}
