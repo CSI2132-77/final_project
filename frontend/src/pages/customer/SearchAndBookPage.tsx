@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Grid,
@@ -10,9 +10,14 @@ import {
   CircularProgress,
   Alert,
   AlertTitle,
-  Chip
+  Chip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button
 } from '@mui/material';
-import { searchRooms } from '../../api/index';
+import { searchRooms, createBooking, getCustomers } from '../../api/index';
 import StyledButton from '../../components/StyledButton';
 import './SearchAndBookPage.css';
 
@@ -25,10 +30,42 @@ interface Room {
   is_extendable: boolean;
 }
 
+interface Customer {
+  customer_id: number;
+  full_name: string;
+  email?: string;
+  phone_number?: string;
+}
+
+interface BookingData {
+  customer_id: number;
+  room_id: number;
+  check_in_date: string;
+  check_out_date: string;
+  status?: 'active' | 'canceled' | 'completed';
+}
+
+interface ApiError {
+  response?: {
+    status?: number;
+    data?: {
+      detail?: string;
+      message?: string;
+    };
+  };
+  message?: string;
+}
+
 const SearchAndBookPage: React.FC = () => {
+  // Set default dates (today and tomorrow)
+  const today = new Date().toISOString().split('T')[0];
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
   const [criteria, setCriteria] = useState({
-    checkIn: '',
-    checkOut: '',
+    checkIn: today,
+    checkOut: tomorrowStr,
     capacity: 'single',
     area: '',
     hotelChain: '',
@@ -36,8 +73,38 @@ const SearchAndBookPage: React.FC = () => {
     priceRange: [0, 1000] as [number, number],
   });
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [selectedCustomer, setSelectedCustomer] = useState<number | null>(null);
   const [message, setMessage] = useState<{text: string; severity: 'success' | 'error' | 'info'} | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isBooking, setIsBooking] = useState(false);
+  const [isFetchingCustomers, setIsFetchingCustomers] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+  const [showBookingDialog, setShowBookingDialog] = useState(false);
+
+  // Fetch customers on component mount
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      setIsFetchingCustomers(true);
+      try {
+        const response = await getCustomers();
+        setCustomers(response.data);
+        if (response.data.length > 0) {
+          setSelectedCustomer(response.data[0].customer_id);
+        }
+      } catch (err: unknown) {
+        const error = err as ApiError;
+        console.error('Error fetching customers:', error);
+        setMessage({
+          text: 'Failed to load customers. Please try again later.',
+          severity: 'error'
+        });
+      } finally {
+        setIsFetchingCustomers(false);
+      }
+    };
+    fetchCustomers();
+  }, []);
 
   const handlePriceRangeChange = (event: Event, newValue: number | number[]) => {
     setCriteria({ ...criteria, priceRange: newValue as [number, number] });
@@ -48,10 +115,22 @@ const SearchAndBookPage: React.FC = () => {
       setMessage({text: 'Please select both check-in and check-out dates', severity: 'error'});
       return false;
     }
-    if (new Date(criteria.checkOut) <= new Date(criteria.checkIn)) {
+    
+    const checkInDate = new Date(criteria.checkIn);
+    const checkOutDate = new Date(criteria.checkOut);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    if (checkInDate < today) {
+      setMessage({text: 'Check-in date cannot be in the past', severity: 'error'});
+      return false;
+    }
+    
+    if (checkOutDate <= checkInDate) {
       setMessage({text: 'Check-out date must be after check-in date', severity: 'error'});
       return false;
     }
+    
     return true;
   };
 
@@ -64,46 +143,40 @@ const SearchAndBookPage: React.FC = () => {
       const params = {
         start_date: criteria.checkIn,
         end_date: criteria.checkOut,
-        capacity: criteria.capacity,
-        address: criteria.area,
-        chain_id: criteria.hotelChain,
-        category: criteria.category,
-        price: criteria.priceRange[1] // Using max price as per your backend
+        ...(criteria.capacity && { capacity: criteria.capacity }),
+        ...(criteria.area && { address: criteria.area }),
+        ...(criteria.hotelChain && { chain_id: criteria.hotelChain }),
+        ...(criteria.category && { category: criteria.category }),
+        price: criteria.priceRange[1]
       };
 
-      // Remove undefined parameters
-      const cleanedParams = Object.fromEntries(
-        Object.entries(params).filter(([_, v]) => v !== undefined)
-      );
+      const response = await searchRooms(params);
 
-      const response = await searchRooms(cleanedParams);
-
-      // Handle both array and error responses
       if (Array.isArray(response.data)) {
         setRooms(response.data);
         setMessage({
           text: `Found ${response.data.length} available rooms`,
-          severity: 'success'
+          severity: response.data.length ? 'success' : 'info'
         });
       } else {
-        // Handle error cases
         setMessage({
           text: 'No rooms found matching your criteria',
           severity: 'info'
         });
         setRooms([]);
       }
-    } catch (err: any) {
-      console.error('Search error:', err);
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      console.error('Search error:', error);
       
       let errorMessage = 'Failed to search rooms. Please try again.';
-      if (err.response) {
-        if (err.response.status === 404) {
+      if (error.response) {
+        if (error.response.status === 404) {
           errorMessage = 'No rooms found matching your criteria.';
-        } else if (err.response.status === 422) {
+        } else if (error.response.status === 422) {
           errorMessage = 'Invalid search parameters. Please check your inputs.';
-        } else if (err.response.data?.detail) {
-          errorMessage = err.response.data.detail;
+        } else if (error.response.data?.detail) {
+          errorMessage = error.response.data.detail;
         }
       }
 
@@ -114,6 +187,65 @@ const SearchAndBookPage: React.FC = () => {
       setRooms([]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleBookNowClick = (room: Room) => {
+    if (!selectedCustomer) {
+      setMessage({
+        text: 'Please select a customer first',
+        severity: 'error'
+      });
+      return;
+    }
+    setSelectedRoom(room);
+    setShowBookingDialog(true);
+  };
+
+  const confirmBooking = async () => {
+    if (!selectedRoom || !selectedCustomer || !criteria.checkIn || !criteria.checkOut) return;
+
+    setIsBooking(true);
+    try {
+      const bookingData: BookingData = {
+        customer_id: selectedCustomer,
+        room_id: selectedRoom.room_id,
+        check_in_date: criteria.checkIn,
+        check_out_date: criteria.checkOut,
+        status: 'active'
+      };
+
+      const bookingResponse = await createBooking(bookingData);
+      
+      setMessage({
+        text: `Booking successful! ID: ${bookingResponse.booking_id}`,
+        severity: 'success'
+      });
+
+      // Refresh available rooms
+      await handleSearch();
+    } catch (err: unknown) {
+      const error = err as ApiError;
+      console.error('Booking error:', error);
+      
+      let errorMessage = 'Booking failed. Please try again.';
+      if (error.response) {
+        if (error.response.status === 404) {
+          errorMessage = 'Room no longer available.';
+        } else if (error.response.status === 422) {
+          errorMessage = 'Invalid booking parameters.';
+        } else if (error.response.data?.detail) {
+          errorMessage = error.response.data.detail;
+        }
+      }
+
+      setMessage({
+        text: errorMessage,
+        severity: 'error'
+      });
+    } finally {
+      setIsBooking(false);
+      setShowBookingDialog(false);
     }
   };
 
@@ -146,6 +278,7 @@ const SearchAndBookPage: React.FC = () => {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
+              inputProps={{ min: today }}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
@@ -157,7 +290,30 @@ const SearchAndBookPage: React.FC = () => {
               InputLabelProps={{ shrink: true }}
               fullWidth
               required
+              inputProps={{ min: tomorrowStr }}
             />
+          </Grid>
+          <Grid item xs={12} sm={6} md={4}>
+            <TextField
+              select
+              label="Customer"
+              value={selectedCustomer || ''}
+              onChange={(e) => setSelectedCustomer(Number(e.target.value))}
+              fullWidth
+              disabled={isFetchingCustomers || customers.length === 0}
+            >
+              {isFetchingCustomers ? (
+                <MenuItem value="">Loading customers...</MenuItem>
+              ) : customers.length > 0 ? (
+                customers.map((customer) => (
+                  <MenuItem key={customer.customer_id} value={customer.customer_id}>
+                    {customer.full_name} (ID: {customer.customer_id})
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem value="">No customers available</MenuItem>
+              )}
+            </TextField>
           </Grid>
           <Grid item xs={12} sm={6} md={4}>
             <TextField
@@ -177,7 +333,7 @@ const SearchAndBookPage: React.FC = () => {
               label="Location"
               placeholder="City or address"
               value={criteria.area}
-              onChange={(e) => setCriteria({ ...criteria, area: e.target.value })}
+              onChange={(e) => setCriteria({ ...criteria, area: e.target.value.trim() })}
               fullWidth
             />
           </Grid>
@@ -186,7 +342,7 @@ const SearchAndBookPage: React.FC = () => {
               label="Hotel Chain ID"
               placeholder="Chain ID"
               value={criteria.hotelChain}
-              onChange={(e) => setCriteria({ ...criteria, hotelChain: e.target.value })}
+              onChange={(e) => setCriteria({ ...criteria, hotelChain: e.target.value.trim() })}
               fullWidth
             />
           </Grid>
@@ -280,6 +436,8 @@ const SearchAndBookPage: React.FC = () => {
                       color="primary"
                       size="large"
                       fullWidth
+                      onClick={() => handleBookNowClick(room)}
+                      disabled={isLoading || !selectedCustomer}
                     >
                       Book Now
                     </StyledButton>
@@ -290,12 +448,59 @@ const SearchAndBookPage: React.FC = () => {
           ))}
         </Grid>
       ) : (
-        <Paper sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="body1">
-            No rooms available. Please adjust your search criteria.
-          </Typography>
-        </Paper>
+        !isLoading && (
+          <Paper sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="body1">
+              No rooms available. Please adjust your search criteria.
+            </Typography>
+          </Paper>
+        )
       )}
+
+      {/* Booking Confirmation Dialog */}
+      <Dialog open={showBookingDialog} onClose={() => setShowBookingDialog(false)}>
+        <DialogTitle>Confirm Booking</DialogTitle>
+        <DialogContent>
+          {selectedRoom && selectedCustomer && (
+            <>
+              <Typography variant="h6" gutterBottom>
+                Booking Details
+              </Typography>
+              <Typography gutterBottom>
+                <strong>Customer:</strong> {
+                  customers.find(c => c.customer_id === selectedCustomer)?.full_name || `ID: ${selectedCustomer}`
+                }
+              </Typography>
+              <Typography gutterBottom>
+                <strong>Room:</strong> #{selectedRoom.room_id}
+              </Typography>
+              <Typography gutterBottom>
+                <strong>Hotel:</strong> #{selectedRoom.hotel_id}
+              </Typography>
+              <Typography gutterBottom>
+                <strong>Price:</strong> {formatPrice(selectedRoom.price)}
+              </Typography>
+              <Typography gutterBottom>
+                <strong>Dates:</strong> {criteria.checkIn} to {criteria.checkOut}
+              </Typography>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowBookingDialog(false)} disabled={isBooking}>
+            Cancel
+          </Button>
+          <Button 
+            onClick={confirmBooking}
+            disabled={isBooking}
+            variant="contained"
+            color="primary"
+            startIcon={isBooking ? <CircularProgress size={20} /> : null}
+          >
+            {isBooking ? 'Processing...' : 'Confirm Booking'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

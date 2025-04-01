@@ -1,10 +1,12 @@
+version: '3.8'
+
 services:
   db:
     image: postgres:latest
     container_name: hotel-db
     restart: always
     env_file:
-      - ./.env  # Load environment variables from the .env file
+      - ./.env
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -20,7 +22,8 @@ services:
       retries: 5
 
   backend:
-    build: ./backend
+    build: 
+      context: ./backend
     container_name: hotel-backend
     ports:
       - "8000:8000"
@@ -28,14 +31,15 @@ services:
       db:
         condition: service_healthy
     env_file:
-      - ./.env  # Ensure backend also loads its own env file
+      - ./.env
     volumes:
       - ./backend:/app
-      - ./.env:/app/.env  # Mount the .env file to the backend container
+      - ./.env:/app/.env
     command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
     container_name: hotel-frontend
     ports:
       - "3000:3000"
@@ -43,6 +47,10 @@ services:
       - backend
     volumes:
       - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
     command: ["npm", "run", "dev"]
 
 volumes:
